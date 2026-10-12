@@ -3,6 +3,7 @@ global.window = {};
 require("../data/sources.js"); require("../data/places.js");
 const { places, sources, courses } = window.HC;
 const err = [];
+const unverified = sources.filter(s => /미확인/.test(s.checkedAt)).length, noUrl = places.reduce((n, p) => n + p.photos.filter(x => !x.url).length, 0);
 const ids = new Set(places.map(p => p.id)), sids = new Set(sources.map(s => s.id));
 if (ids.size !== places.length) err.push("장소 id 중복");
 if (places.length < 9) err.push("장소 9곳 미만");
@@ -13,12 +14,12 @@ places.forEach(p => {
   ["name","region","category","eventDate","historicalName","currentName","currentAddress","summary","inquiryQuestion","teacherNote"].forEach(k => { if (!p[k]) err.push(p.id + " 빈 필드 " + k); });
   if (!ST.includes(p.status)) err.push(p.id + " status");
   if (!["광주","전남"].includes(p.region)) err.push(p.id + " region");
-  if (!["독립운동","근대 건축","5·18"].includes(p.category)) err.push(p.id + " category");
+  if (!window.HC.categories.includes(p.category)) err.push(p.id + " category");
   if (!["FACT","PROBABLE"].includes(p.coordinate.accuracy)) err.push(p.id + " accuracy");
   const c = p.coordinate; if (!(c.latitude > 33 && c.latitude < 39 && c.longitude > 124 && c.longitude < 130)) err.push(p.id + " 좌표 범위");
   [...c.sourceIds, ...p.facts.flatMap(f => f.sourceIds), ...p.photos.map(x => x.sourceId)].forEach(s => { if (!sids.has(s)) err.push(p.id + " 없는 출처 " + s); });
   p.facts.forEach(f => { if (!CF.includes(f.confidence)) err.push(p.id + " confidence"); if (f.confidence !== "RECONSTRUCTED" && !f.sourceIds.length) err.push(p.id + " 출처 없는 사실"); });
-  if (!["독립운동","근대 건축","5·18"].includes(p.category)) err.push("cat");
+  if (!window.HC.categories.includes(p.category)) err.push("cat");
   p.photos.forEach(x => { if (x.type === "trace" && /역사사진|1980년 당시 사진/.test(x.caption) && !x.warning) err.push(p.id + " 표지석 경고 없음"); });
   if (p.status !== "현존" && p.photos.some(x => x.type === "current") && !p.photos.some(x => x.type !== "current") && !/미확보|미등록/.test(JSON.stringify(p.photos))) { /* UI가 과거 사진 미확보를 표시 */ }
 });
@@ -33,4 +34,5 @@ const m2 = places.find(p => p.id === "mokpo2"); if (!/1920~1921/.test(m2.eventDa
 const nk = places.find(p => p.id === "nokdu"); if (!nk.photos.some(x => x.type === "trace" && x.shootingYear === "2018" && x.warning)) err.push("녹두서점 2018 사진");
 sources.forEach(s => { if (!/^https?:\/\//.test(s.url)) err.push("출처 URL " + s.id); });
 if (err.length) { console.error("실패:\n" + err.join("\n")); process.exit(1); }
+console.log("[주의] 원문 미확인 출처 " + unverified + "건, 주소 미등록 사진 " + noUrl + "건");
 console.log("데이터 점검 통과: 장소 " + places.length + ", 출처 " + sources.length + ", 코스 " + courses.length);

@@ -110,7 +110,8 @@
   function renderCards() {
     var list = filtered(), box = $("#cards");
     $("#resultCount").textContent = "검색 결과 " + list.length + "곳 / 전체 " + PLACES.length + "곳";
-    if (!list.length) { box.innerHTML = '<div class="empty"><p><b>조건에 맞는 장소가 없습니다.</b></p><p>검색어나 필터를 바꾸거나 초기화해 보세요.</p></div>'; return; }
+    if (!list.length) { var soon = ui.cat && !PLACES.some(function (p) { return p.category === ui.cat; });
+      box.innerHTML = '<div class="empty"><p><b>' + (soon ? esc(ui.cat) + " 장소는 아직 등록되지 않았습니다(자료 확인 후 추가 예정)." : "조건에 맞는 장소가 없습니다.") + "</b></p><p>검색어나 필터를 바꾸거나 초기화해 보세요.</p></div>"; return; }
     box.innerHTML = list.map(function (p) {
       var pk = isPicked(p.id);
       return '<article class="card' + (ui.selected === p.id ? " sel" : "") + '" data-id="' + esc(p.id) + '">' +
@@ -390,6 +391,10 @@
   }
 
   function init() {
+    HC.categories.forEach(function (name) {
+      var n = PLACES.filter(function (p) { return p.category === name; }).length, o = document.createElement("option");
+      o.value = name; o.textContent = name + (n ? "" : " (준비 중)"); $("#fCat").appendChild(o);
+    });
     COURSES.forEach(function (c) { var o = document.createElement("option"); o.value = c.id; o.textContent = c.title; $("#courseSel").appendChild(o); });
     load(); initMap(); bind(); renderAll(); fit("all");
     window.HC_TEST = { csvCell: csvCell, buildCsv: buildCsv, buildPrint: buildPrint, state: function () { return state; } };

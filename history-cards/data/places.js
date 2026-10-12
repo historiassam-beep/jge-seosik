@@ -3,6 +3,8 @@
 // 새 지역/주제(예: 여순사건)는 category 값과 앱의 CATEGORIES 배열에 추가하면 된다.
 window.HC = window.HC || {};
 const LOC_NOTE = "개략 좌표입니다. 정확한 지점은 지도·현장에서 대조해야 합니다.";
+// 주제 목록. 새 주제는 여기에 추가하면 필터에 나타난다(장소가 0곳이면 "준비 중"으로 표시).
+window.HC.categories = ["독립운동", "근대 건축", "5·18", "여순사건"];
 window.HC.places = [
   {
     id: "sufia", name: "수피아여학교·수피아홀", region: "광주", category: "독립운동",
