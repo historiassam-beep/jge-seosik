@@ -37,3 +37,16 @@ window.HC = window.HC || {};
   HC.districtKey = function (p) { var d = HC.districtOf(p); return d ? p.region + " " + d : ""; };
   HC.regionOrder = ["광주", "전남", "경남"];
 })(window.HC);
+
+// 민간인·희생과 직접 관련된 장소(학교급별 노출 조절용). 이름·지정 사유 문장의 낱말로 판단하므로 목록은 교사가 확인해야 한다.
+(function (HC) {
+  var RE = /학살|암매장|시신|고문|발포|사살|사망|총격|희생|묘지|형제묘|위령|연행|격전지/;
+  HC.isSensitive = function (p) {
+    var text = (p.name + " " + (p.summary || "")).replace(/남고문/g, "");   // '남고문'(나주 성문)의 '고문' 오탐 방지
+    return RE.test(text) || (p.tags || []).indexOf("희생 관련 장소") >= 0;
+  };
+  // 초등학생 보기에서는 희생 관련 장소와 여순사건 전체(성격이 확인되지 않은 곳이 많음)를 기본으로 숨긴다.
+  HC.hiddenForElementary = function (p) { return p.category === "여순사건" || HC.isSensitive(p); };
+  HC.needsCare = function (p) { return HC.isSensitive(p) || p.category === "여순사건"; };
+  HC.levels = ["교사(전체)", "초등학생", "중학생", "고등학생"];
+})(window.HC);

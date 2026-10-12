@@ -77,10 +77,12 @@
   function noteOf(id) { return state.notes[id] || { obs: "", evidence: "", todo: "", question: "" }; }
 
   // ---------- 필터 ----------
-  var ui = { q: "", region: "", district: "", event: "", group: "", era: "", cat: "", status: "", picked: false, selected: null, course: "", mode: "events", step: 0 };
+  var ui = { level: "교사(전체)", showSensitive: false, q: "", region: "", district: "", event: "", group: "", era: "", cat: "", status: "", picked: false, selected: null, course: "", mode: "events", step: 0 };
+  function levelHidden(p) { return ui.level === "초등학생" && !ui.showSensitive && HC.hiddenForElementary(p); }
   function filtered() {
     var terms = ui.q.toLowerCase().split(/\s+/).filter(Boolean);
     return PLACES.filter(function (p) {
+      if (levelHidden(p)) return false;
       if (ui.region && p.region !== ui.region) return false;
       if (ui.district && p.districtKey !== ui.district) return false;
       if (ui.event && p.events.indexOf(ui.event) < 0) return false;
@@ -97,6 +99,15 @@
   }
 
   // ---------- 사진 ----------
+  function careNote(p) {
+    if (!HC.needsCare(p) || (ui.level !== "초등학생" && ui.level !== "중학생")) return "";
+    return '<p class="note-warn care-note">⚠ 민간인 희생과 관련될 수 있는 장소입니다. 자극적인 표현·사진을 피하고 추모와 진상 이해의 관점에서 다루세요.</p>';
+  }
+  function hiddenCount() { return ui.level === "초등학생" && !ui.showSensitive ? PLACES.filter(HC.hiddenForElementary).length : 0; }
+  function levelNotice() {
+    var n = hiddenCount();
+    return n ? '<div class="empty lvl-notice"><p><b>초등학생 보기:</b> 민간인 희생과 관련될 수 있는 장소 ' + n + '곳(여순사건 전체 포함)을 숨겼습니다.</p><p><button type="button" id="btnShowSens">교사 확인 후 모두 표시</button></p></div>' : "";
+  }
   function cardSources(p) {
     var u = {}, ids = [];
     p.coordinate.sourceIds.concat.apply(p.coordinate.sourceIds, p.facts.map(function (f) { return f.sourceIds; })).forEach(function (s) { if (SRC[s] && !u[s]) { u[s] = 1; ids.push(s); } });
@@ -139,30 +150,31 @@
   function renderCards() {
     var list = filtered(), box = $("#cards");
     var noMap = list.filter(function (p) { return !hasCoord(p); }).length;
-    $("#resultCount").textContent = "검색 결과 " + list.length + "곳 / 전체 " + PLACES.length + "곳" + (noMap ? " (좌표 미확인 " + noMap + "곳은 지도에 표시되지 않음)" : "");
+    $("#resultCount").textContent = "검색 결과 " + list.length + "곳 / 전체 " + PLACES.length + "곳" + (noMap ? " (좌표 미확인 " + noMap + "곳은 지도에 표시되지 않음)" : "") + (hiddenCount() ? " · 초등학생 보기로 " + hiddenCount() + "곳 숨김" : "");
     if (!list.length) { var soon = (ui.cat && !PLACES.some(function (p) { return p.category === ui.cat; })) ? ui.cat : ((ui.era && !PLACES.some(function (p) { return p.era === ui.era; })) ? ui.era : "");
-      box.innerHTML = '<div class="empty"><p><b>' + (soon ? esc(soon) + " 장소는 아직 등록되지 않았습니다(자료 확인 후 추가 예정)." : "조건에 맞는 장소가 없습니다.") + "</b></p><p>검색어나 필터를 바꾸거나 초기화해 보세요.</p></div>"; return; }
+      box.innerHTML = '<div class="empty"><p><b>' + (soon ? esc(soon) + " 장소는 아직 등록되지 않았습니다(자료 확인 후 추가 예정)." : "조건에 맞는 장소가 없습니다.") + "</b></p><p>검색어나 필터를 바꾸거나 초기화해 보세요.</p></div>" + levelNotice(); return; }
     function card(p) {
       var pk = isPicked(p.id);
       return '<article class="card' + (ui.selected === p.id ? " sel" : "") + '" data-id="' + esc(p.id) + '">' +
         "<h3>" + esc(p.name) + "</h3>" +
-        '<div class="meta"><span class="tag">' + esc(p.region) + '</span><span class="tag">' + esc(p.category) + '</span><span class="tag">' + esc(p.eventDate) + '</span><span class="tag">상태: ' + esc(p.status) + "</span>" +
+        '<div class="meta"><span class="tag">' + esc(p.region) + '</span><span class="tag">' + esc(p.category) + '</span><span class="tag">' + esc(p.eventDate) + '</span><span class="tag">상태: ' + esc(p.status) + "</span>" + (HC.isSensitive(p) ? '<span class="tag care">희생 관련 장소</span>' : "") +
         badge(p.coordinate.accuracy, "위치: ") + (hasCoord(p) ? "" : '<span class="tag">지도 좌표 미확인</span>') + "</div>" + cardThumb(p) +
         '<p class="names"><b>당시 지명</b> ' + esc(p.historicalName) + "<br><b>현재 지명</b> " + esc(p.currentName) + "</p>" +
-        "<p>" + esc(p.summary) + "</p>" +
+        "<p>" + esc(ui.level === "초등학생" && p.easySummary ? p.easySummary : p.summary) + "</p>" + careNote(p) +
         '<p class="q">생각해 볼 질문: ' + esc(p.inquiryQuestion) + "</p>" +
         '<p class="srcs">출처: ' + cardSources(p) + "</p>" +
         '<div class="cardbtns"><button type="button" data-act="detail">자세히 보기</button>' +
         '<button type="button" class="ghost" data-act="find">지도에서 찾기</button>' +
         '<button type="button" class="ghost" data-act="pick" aria-pressed="' + pk + '">' + (pk ? "수업에서 빼기" : "수업에 담기") + "</button></div></article>";
     }
-    if (!ui.group) { box.innerHTML = list.map(card).join(""); return; }
+    var notice = levelNotice();
+    if (!ui.group) { box.innerHTML = notice + list.map(card).join(""); return; }
     var groups = {}, keys = [];
     list.forEach(function (p) {
       (ui.group === "district" ? [p.districtKey || "(시군구 미상)"] : (p.events.length ? p.events : ["(사건 미분류)"])).forEach(function (k) { if (!groups[k]) { groups[k] = []; keys.push(k); } groups[k].push(p); });
     });
     keys.sort(ui.group === "district" ? districtCmp : eventCmp);
-    box.innerHTML = keys.map(function (k) { return '<section class="grp" aria-label="' + esc(k) + '"><h3 class="grp-h">' + esc(k) + " (" + groups[k].length + "곳)</h3>" + groups[k].map(card).join("") + "</section>"; }).join("");
+    box.innerHTML = notice + keys.map(function (k) { return '<section class="grp" aria-label="' + esc(k) + '"><h3 class="grp-h">' + esc(k) + " (" + groups[k].length + "곳)</h3>" + groups[k].map(card).join("") + "</section>"; }).join("");
   }
   function districtCmp(a, b) { var ra = HC.regionOrder.indexOf(a.split(" ")[0]), rb = HC.regionOrder.indexOf(b.split(" ")[0]); return (ra - rb) || a.localeCompare(b, "ko"); }
   function eventCmp(a, b) { var n = HC.eventList.map(function (e) { return e.name; }); return (n.indexOf(a) + 99 * (n.indexOf(a) < 0)) - (n.indexOf(b) + 99 * (n.indexOf(b) < 0)); }
@@ -213,7 +225,7 @@
     var ids = {}; filtered().forEach(function (p) { ids[p.id] = 1; });
     var steps = courseSteps(); if (steps) steps.forEach(function (s) { ids[s.placeId] = 1; });
     if (ui.selected) ids[ui.selected] = 1;
-    return PLACES.filter(function (p) { return ids[p.id] && hasCoord(p); });
+    return PLACES.filter(function (p) { return ids[p.id] && hasCoord(p) && !levelHidden(p); });
   }
   function initMap() {
     mapEl.innerHTML = '<div class="tiles"></div><svg aria-hidden="true"></svg><div class="markers"></div>' +
@@ -440,6 +452,8 @@
     $("#fRegion").addEventListener("change", function (e) { ui.region = e.target.value; fillDistricts(); renderAll(); });
     $("#fDistrict").addEventListener("change", function (e) { ui.district = e.target.value; renderAll(); });
     $("#fEvent").addEventListener("change", function (e) { ui.event = e.target.value; renderAll(); });
+    $("#fLevel").addEventListener("change", function (e) { ui.level = e.target.value; ui.showSensitive = false; try { localStorage.setItem("hc.level", ui.level); } catch (_) {} renderAll(); });
+    $("#cards").addEventListener("click", function (e) { if (e.target.id === "btnShowSens") { ui.showSensitive = true; renderAll(); } });
     $("#fGroup").addEventListener("change", function (e) { ui.group = e.target.value; renderAll(); });
     $("#fEra").addEventListener("change", function (e) { ui.era = e.target.value; renderAll(); });
     $("#fCat").addEventListener("change", function (e) { ui.cat = e.target.value; renderAll(); });
@@ -502,6 +516,7 @@
       var n = PLACES.filter(function (p) { return p.category === name; }).length, o = document.createElement("option");
       o.value = name; o.textContent = name + (n ? "" : " (준비 중)"); $("#fCat").appendChild(o);
     });
+    try { var lv = localStorage.getItem("hc.level"); if (lv && HC.levels.indexOf(lv) >= 0) { ui.level = lv; $("#fLevel").value = lv; } } catch (_) {}
     load(); fillCourseSelect(); initMap(); bind(); renderAll(); fit("all");
     bindMyCourse();
     window.HC_TEST = { csvCell: csvCell, buildCsv: buildCsv, buildPrint: buildPrint, state: function () { return state; } };

@@ -73,6 +73,22 @@ let fails = 0; const ok = (c, m) => { console.log((c ? "PASS " : "FAIL ") + m); 
   ok((await page.locator("#courseSel option", { hasText: "우리 학교 앞 코스" }).count()) === 0, "내 코스 삭제");
   for (const id of ["sufia", "geumnam", "ik-145"]) { await page.fill("#q", ""); await page.click(`.card[data-id="${id}"] button[data-act=pick]`); }
   await page.click("#btnReset");
+  // 학교급 · 희생 관련 장소 조절 · 설명 보강
+  const HID = await page.evaluate(() => HC.places.filter(HC.hiddenForElementary).length);
+  ok(HID > 100 && await page.evaluate(() => !HC.isSensitive(HC.places.find(p => p.id === "518jn-07"))), "민감 판별(남고문 오탐 없음) · 초등 숨김 대상 " + HID);
+  await page.selectOption("#fLevel", "초등학생");
+  ok(await page.locator(".card").count() === TOTAL - HID && await page.locator(".lvl-notice").count() === 1 && /초등학생 보기로/.test(await page.locator("#resultCount").textContent()), "초등학생 보기: 희생 관련·여순사건 숨김과 안내");
+  ok(await page.locator('.card[data-id="ys-yeosu-01"]').count() === 0 && await page.locator('.card[data-id="oldstation"]').count() === 1, "초등학생 보기: 형제묘 숨김, 옛 광주역 표시");
+  ok((await page.locator('.card[data-id="oldstation"]').textContent()).includes("놀린 일이 있었어요"), "초등학생 보기: 쉬운 설명");
+  await page.click("#btnShowSens"); ok(await page.locator(".card").count() === TOTAL && await page.locator('.card[data-id="ys-yeosu-01"] .care-note').count() === 1, "교사 확인 후 표시 → 전체 + 주의 문구");
+  await page.selectOption("#fLevel", "중학생"); ok(await page.locator(".card").count() === TOTAL && await page.locator('.card[data-id="ys-yeosu-01"] .care-note').count() === 1 && await page.locator('.card[data-id="oldstation"] .care-note').count() === 0, "중학생 보기: 전체 표시 + 희생 장소 주의");
+  await page.selectOption("#fLevel", "고등학생"); ok(await page.locator(".care-note").count() === 0 && await page.locator('.card[data-id="ys-yeosu-01"] .tag.care').count() === 1, "고등학생 보기: 주의 문구 없이 태그만");
+  await page.selectOption("#fLevel", "교사(전체)");
+  await page.click('.card[data-id=mokpo2] button[data-act=detail]');
+  const mk = await page.locator("#dlgBody").textContent();
+  ok(/1921년 11월 7일/.test(mk) && /1920년 6월/.test(mk) && /1920년·1921년 표기 차이/.test(mk) && /사적지배움터/.test(mk), "설명 보강: 목포 2관 이전·신축 시기와 출처(확정하지 않음 표기 유지)");
+  await page.click("#dlgClose");
+  await page.click('.card[data-id=oldstation] button[data-act=detail]'); ok(/나주역/.test(await page.locator("#dlgBody").textContent()), "설명 보강: 1929 첫 충돌은 나주역"); await page.click("#dlgClose");
   // 흐름 3
   await page.selectOption("#fRegion", "전남"); await page.fill("#q", "목포근대역사관");
   ok(await page.locator(".card").count() === 2 && /2곳/.test(await page.locator("#resultCount").textContent()), "전남 필터 2곳");

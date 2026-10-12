@@ -1,6 +1,6 @@
 // 데이터 점검: node tests/check-data.js
 global.window = {};
-require("../data/taxonomy.js"); require("../data/sources.js"); require("../data/places.js"); require("../data/places_ik.js"); require("../data/places_518jn.js"); require("../data/places_518gj.js"); require("../data/places_yeosun.js");
+require("../data/taxonomy.js"); require("../data/sources.js"); require("../data/places.js"); require("../data/places_ik.js"); require("../data/places_518jn.js"); require("../data/places_518gj.js"); require("../data/places_yeosun.js"); require("../data/enrich.js");
 const { places, sources, courses } = window.HC; const HC = window.HC;
 const err = [];
 const unverified = sources.filter(s => /미확인/.test(s.checkedAt)).length, noUrl = places.reduce((n, p) => n + p.photos.filter(x => !x.url).length, 0);
