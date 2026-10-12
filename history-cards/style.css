@@ -107,3 +107,4 @@ dialog::backdrop{background:#0006}
 .mk .n{font-weight:700}
 .note-warn{font-size:.82rem;color:var(--warn)}
 [hidden]{display:none!important}
+.grp{display:flex;flex-direction:column;gap:.8rem}.grp-h{position:sticky;top:0;background:var(--bg);padding:.4rem 0;border-bottom:2px solid var(--olive);z-index:3}

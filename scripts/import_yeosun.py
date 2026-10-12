@@ -16,7 +16,7 @@ for r in rows:
         "name": name, "region": region, "category": "여순사건", "era": "근현대", "tags": tags,
         "eventDate": "1948년 (여순사건)",
         "historicalName": "(자료에 별도 표기 없음)", "currentName": "(자료에 별도 표기 없음)",
-        "currentAddress": full or "주소 미기재(여수시 목록)", "status": "현장 확인 필요",
+        "currentAddress": full or "주소 미기재(여수시 목록)", **({} if full else {"district": sg}), "status": "현장 확인 필요",
         "coordinate": {"latitude": float(la) if ok else None, "longitude": float(lo) if ok else None, "accuracy": "PROBABLE",
                        "note": ("주소를 변환한 좌표입니다. 유적의 정확한 지점과 다를 수 있어 현장 확인이 필요합니다." if ok else "원본 목록에 좌표가 없어 지도에 표시하지 않습니다. 주소를 좌표로 바꾼 뒤 현장에서 대조해야 합니다.") + (" 비고: " + r["비고"] if r["비고"] else ""), "sourceIds": ["ys-list"]},
         "summary": "여순사건 유적지 목록의 " + sg + " " + no + "번 장소입니다. 사건 설명은 아직 입력하지 않았습니다(원문에서 확인 필요).",

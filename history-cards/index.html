@@ -27,8 +27,17 @@
   <label class="f-search">검색
     <input id="q" type="search" placeholder="장소명·당시 지명·현재 지명·연도" autocomplete="off">
   </label>
+  <label>사건
+    <select id="fEvent"><option value="">전체</option></select>
+  </label>
   <label>지역
     <select id="fRegion"><option value="">전체</option><option>광주</option><option>전남</option><option value="경남">경남(여순사건 참고)</option></select>
+  </label>
+  <label>시군구
+    <select id="fDistrict"><option value="">전체</option></select>
+  </label>
+  <label>묶어서 보기
+    <select id="fGroup"><option value="">묶지 않음</option><option value="district">시군구별</option><option value="event">사건별</option></select>
   </label>
   <label>시대
     <select id="fEra"><option value="">전체</option></select>
@@ -96,6 +105,7 @@
 
 <div id="printArea" aria-hidden="true"></div>
 
+<script src="data/taxonomy.js"></script>
 <script src="data/sources.js"></script>
 <script src="data/places.js"></script>
 <script src="data/places_ik.js"></script>

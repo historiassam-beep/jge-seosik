@@ -57,11 +57,13 @@
   function noteOf(id) { return state.notes[id] || { obs: "", evidence: "", todo: "", question: "" }; }
 
   // ---------- 필터 ----------
-  var ui = { q: "", region: "", era: "", cat: "", status: "", picked: false, selected: null, course: "", mode: "events", step: 0 };
+  var ui = { q: "", region: "", district: "", event: "", group: "", era: "", cat: "", status: "", picked: false, selected: null, course: "", mode: "events", step: 0 };
   function filtered() {
     var terms = ui.q.toLowerCase().split(/\s+/).filter(Boolean);
     return PLACES.filter(function (p) {
       if (ui.region && p.region !== ui.region) return false;
+      if (ui.district && p.districtKey !== ui.district) return false;
+      if (ui.event && p.events.indexOf(ui.event) < 0) return false;
       if (ui.era && p.era !== ui.era) return false;
       if (ui.cat && p.category !== ui.cat) return false;
       if (ui.status && statusGroup(p.status) !== ui.status) return false;
@@ -120,7 +122,7 @@
     $("#resultCount").textContent = "검색 결과 " + list.length + "곳 / 전체 " + PLACES.length + "곳" + (noMap ? " (좌표 미확인 " + noMap + "곳은 지도에 표시되지 않음)" : "");
     if (!list.length) { var soon = (ui.cat && !PLACES.some(function (p) { return p.category === ui.cat; })) ? ui.cat : ((ui.era && !PLACES.some(function (p) { return p.era === ui.era; })) ? ui.era : "");
       box.innerHTML = '<div class="empty"><p><b>' + (soon ? esc(soon) + " 장소는 아직 등록되지 않았습니다(자료 확인 후 추가 예정)." : "조건에 맞는 장소가 없습니다.") + "</b></p><p>검색어나 필터를 바꾸거나 초기화해 보세요.</p></div>"; return; }
-    box.innerHTML = list.map(function (p) {
+    function card(p) {
       var pk = isPicked(p.id);
       return '<article class="card' + (ui.selected === p.id ? " sel" : "") + '" data-id="' + esc(p.id) + '">' +
         "<h3>" + esc(p.name) + "</h3>" +
@@ -133,7 +135,24 @@
         '<div class="cardbtns"><button type="button" data-act="detail">자세히 보기</button>' +
         '<button type="button" class="ghost" data-act="find">지도에서 찾기</button>' +
         '<button type="button" class="ghost" data-act="pick" aria-pressed="' + pk + '">' + (pk ? "수업에서 빼기" : "수업에 담기") + "</button></div></article>";
-    }).join("");
+    }
+    if (!ui.group) { box.innerHTML = list.map(card).join(""); return; }
+    var groups = {}, keys = [];
+    list.forEach(function (p) {
+      (ui.group === "district" ? [p.districtKey || "(시군구 미상)"] : (p.events.length ? p.events : ["(사건 미분류)"])).forEach(function (k) { if (!groups[k]) { groups[k] = []; keys.push(k); } groups[k].push(p); });
+    });
+    keys.sort(ui.group === "district" ? districtCmp : eventCmp);
+    box.innerHTML = keys.map(function (k) { return '<section class="grp" aria-label="' + esc(k) + '"><h3 class="grp-h">' + esc(k) + " (" + groups[k].length + "곳)</h3>" + groups[k].map(card).join("") + "</section>"; }).join("");
+  }
+  function districtCmp(a, b) { var ra = HC.regionOrder.indexOf(a.split(" ")[0]), rb = HC.regionOrder.indexOf(b.split(" ")[0]); return (ra - rb) || a.localeCompare(b, "ko"); }
+  function eventCmp(a, b) { var n = HC.eventList.map(function (e) { return e.name; }); return (n.indexOf(a) + 99 * (n.indexOf(a) < 0)) - (n.indexOf(b) + 99 * (n.indexOf(b) < 0)); }
+  function fillDistricts() {
+    var sel = $("#fDistrict"), counts = {}, keys = [];
+    PLACES.forEach(function (p) { if (ui.region && p.region !== ui.region) return; var k = p.districtKey; if (!k) return; if (!counts[k]) { counts[k] = 0; keys.push(k); } counts[k]++; });
+    keys.sort(districtCmp);
+    if (ui.district && keys.indexOf(ui.district) < 0) ui.district = "";
+    sel.innerHTML = '<option value="">전체</option>' + keys.map(function (k) { return '<option value="' + esc(k) + '">' + esc(k) + " (" + counts[k] + ")</option>"; }).join("");
+    sel.value = ui.district;
   }
 
   // ---------- 코스 ----------
@@ -354,14 +373,17 @@
   // ---------- 이벤트 ----------
   function bind() {
     $("#q").addEventListener("input", function (e) { ui.q = e.target.value; renderAll(); });
-    $("#fRegion").addEventListener("change", function (e) { ui.region = e.target.value; renderAll(); });
+    $("#fRegion").addEventListener("change", function (e) { ui.region = e.target.value; fillDistricts(); renderAll(); });
+    $("#fDistrict").addEventListener("change", function (e) { ui.district = e.target.value; renderAll(); });
+    $("#fEvent").addEventListener("change", function (e) { ui.event = e.target.value; renderAll(); });
+    $("#fGroup").addEventListener("change", function (e) { ui.group = e.target.value; renderAll(); });
     $("#fEra").addEventListener("change", function (e) { ui.era = e.target.value; renderAll(); });
     $("#fCat").addEventListener("change", function (e) { ui.cat = e.target.value; renderAll(); });
     $("#fStatus").addEventListener("change", function (e) { ui.status = e.target.value; renderAll(); });
     $("#fPicked").addEventListener("change", function (e) { ui.picked = e.target.checked; renderAll(); });
     $("#btnReset").addEventListener("click", function () {
-      ui.q = ui.region = ui.era = ui.cat = ui.status = ""; ui.picked = false;
-      $("#q").value = ""; $("#fEra").value = ""; $("#fRegion").value = ""; $("#fCat").value = ""; $("#fStatus").value = ""; $("#fPicked").checked = false; renderAll();
+      ui.q = ui.region = ui.district = ui.event = ui.group = ui.era = ui.cat = ui.status = ""; ui.picked = false;
+      $("#q").value = ""; $("#fEra").value = ""; $("#fRegion").value = ""; $("#fEvent").value = ""; $("#fGroup").value = ""; fillDistricts(); $("#fCat").value = ""; $("#fStatus").value = ""; $("#fPicked").checked = false; renderAll();
     });
     $("#courseSel").addEventListener("change", function (e) { ui.course = e.target.value; ui.step = 0; if (ui.course) { var s = courseSteps(); select(s[0].placeId, true); } renderAll(); });
     Array.prototype.forEach.call(document.querySelectorAll("input[name=mode]"), function (r) {
@@ -402,6 +424,12 @@
   }
 
   function init() {
+    PLACES.forEach(function (p) { p.events = HC.eventsOf(p); p.districtKey = HC.districtKey(p); });
+    HC.eventList.forEach(function (ev) {
+      var n = PLACES.filter(function (p) { return p.events.indexOf(ev.name) >= 0; }).length, o = document.createElement("option");
+      o.value = ev.name; o.textContent = ev.name + " (" + n + ")"; $("#fEvent").appendChild(o);
+    });
+    fillDistricts();
     HC.eras.forEach(function (name) {
       var n = PLACES.filter(function (p) { return p.era === name; }).length, o = document.createElement("option");
       o.value = name; o.textContent = name + (n ? "" : " (준비 중)"); $("#fEra").appendChild(o);

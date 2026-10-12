@@ -880,6 +880,7 @@ window.HC.places = window.HC.places.concat([
   "historicalName": "(자료에 별도 표기 없음)",
   "currentName": "(자료에 별도 표기 없음)",
   "currentAddress": "주소 미기재(여수시 목록)",
+  "district": "여수시",
   "status": "현장 확인 필요",
   "coordinate": {
    "latitude": null,
