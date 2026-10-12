@@ -130,40 +130,48 @@ footer{margin-top:30px;font-size:12.5px;color:var(--muted);border-top:1px solid 
 
 <script>
 /* ── 데이터 ──────────────────────────────────────────────
-   새 서식 추가: 아래 SEOSIK 배열에 한 줄씩 추가합니다.
-   cat: 분류 이름(CATS 중 하나) / access: "open" 또는 "login"
-   region: "공통"(전국·통합 공통) / "구 광주" / "구 전남" — 확인 전이면 출처 기관 기준
-   url: 게시물 주소가 있으면 게시물, 없으면 게시판 목록 주소
+   서식 목록은 data/seosik.csv, 게시판 목록은 data/boards.csv 에 있습니다.
+   엑셀에서 열어 한 줄씩 추가하고 저장하면 사이트에 바로 반영됩니다.
+   (CSV UTF-8 권장. 엑셀 기본 CSV(EUC-KR)로 저장해도 읽힙니다.)
    ─────────────────────────────────────────────────────── */
-const CATS = ["교육과정·학사","진로·입학","정보·개인정보","학생·장학","급식·보건","민원·대외","업무 매뉴얼(통합)"];
+const CATS = ["교육과정·학사","진로·입학","정보·개인정보","학생·장학","급식·보건","민원·대외","교원인사·복무","학교행정·회계","업무 매뉴얼(통합)"];
+let SEOSIK = [], BOARDS = [];
 
-const BOARDS = [
-  {name:"교육과정 자료실", org:"교육과정 누리집", url:"https://cic.jge.go.kr/xboard/board.php?tbnum=5"},
-  {name:"진로진학지원센터", org:"광주진로진학지원센터", url:"https://jinhak.jge.go.kr/"},
-  {name:"정보공개 자료실", org:"광주서부교육지원청", url:"https://seobu.jge.go.kr/board.php?id=112"},
-  {name:"교습소 민원 안내", org:"광주동부교육지원청", url:"https://dongbu.jge.go.kr/page.php?id=27"},
-  {name:"학교급식정보센터", org:"학교급식정보센터", url:"https://food.jge.go.kr/main/main.php"},
-  {name:"희망사다리 공지사항", org:"광주 희망사다리 교육재단", url:"https://nanum.jge.go.kr/xboard/board.php?tbnum=2"},
-  {name:"학교업무최적화지원시스템", org:"(구)광주광역시교육청 · 로그인 필요", url:"https://www.gen.go.kr/xmanual/main/main.php"},
-  {name:"본청 누리집", org:"전남광주통합특별시교육청", url:"https://www.jge.go.kr/"}
-];
-
-const SEOSIK = [
-  {title:"2027학년도 고등학교 교육과정 편제 및 학점배당 편성표 서식 (2026.8월 기준)", cat:"교육과정·학사", org:"교육과정 누리집", board:"교육과정 자료실", date:"2026-08-18", fmt:["xlsm"], access:"open", region:"구 광주", url:"https://cic.jge.go.kr/xboard/board.php?tbnum=5", note:"2022 개정 교육과정 일반고 편성표 작성 매크로 서식 v7.4.0. 8월 기준 최신판입니다."},
-  {title:"2027학년도 고등학교 교육과정 편제 및 학점배당 편성표 서식 (2026.5월 기준)", cat:"교육과정·학사", org:"교육과정 누리집", board:"교육과정 자료실", date:"2026-05-13", fmt:["xlsm"], access:"open", region:"구 광주", url:"https://cic.jge.go.kr/xboard/board.php?tbnum=5", note:"매크로 서식 v7.2.1. 8월 기준판이 나왔으므로 새 편성은 8월판을 쓰세요."},
-  {title:"2027학년도 특수학교 교육과정 편성 관련 서식 및 자체 점검표 모음", cat:"교육과정·학사", org:"교육과정 누리집", board:"교육과정 자료실", date:"2026-09-17", fmt:["hwp"], access:"open", region:"구 광주", url:"https://cic.jge.go.kr/xboard/board.php?tbnum=5", note:"특수학교 교육과정 편성 검토 및 컨설팅 계획 안내가 함께 붙어 있습니다."},
-  {title:"수업일수 감축 운영 보고서 (서식)", cat:"교육과정·학사", org:"교육과정 누리집", board:"교육과정 자료실", date:"2024-09-20", fmt:["hwpx"], access:"open", region:"구 광주", url:"https://cic.jge.go.kr/xboard/board.php?tbnum=5", note:"재해 등으로 수업일수를 줄여 운영할 때 제출하는 보고서 양식입니다."},
-  {title:"2024학년도 고등학교 교육과정 편성표 제출 서식", cat:"교육과정·학사", org:"교육과정 누리집", board:"교육과정 자료실", date:"2023-04-23", fmt:["xlsm"], access:"open", region:"구 광주", url:"https://cic.jge.go.kr/xboard/board.php?mode=view&number=22011&page=1&tbnum=5", note:"지난 학년도 서식입니다. 참고용으로만 쓰세요."},
-  {title:"2027학년도 후기 평준화 일반고등학교 신입생 입학전형 서식 모음", cat:"진로·입학", org:"광주진로진학지원센터", board:"진로진학지원센터 · 고입정보", date:"2026-09", fmt:["hwp"], access:"open", region:"구 광주", url:"https://jinhak.jge.go.kr/", note:"검정고시 합격자 등 제출서류 서식 묶음입니다. 원서 제출 전 최종본인지 다시 확인하세요."},
-  {title:"정보보안 업무편람 (관련 서식 첨부)", cat:"정보·개인정보", org:"광주서부교육지원청", board:"정보공개 자료실", date:"2022-01-18", fmt:["hwp"], access:"open", region:"구 광주", url:"https://seobu.jge.go.kr/board.php?id=112", note:"2021년판입니다. 서식 틀은 참고할 만하지만 최신 지침은 따로 확인하세요."},
-  {title:"개인정보보호 업무 편람", cat:"정보·개인정보", org:"광주서부교육지원청", board:"정보공개 자료실", date:"2022-01-18", fmt:["hwp"], access:"open", region:"구 광주", url:"https://seobu.jge.go.kr/board.php?id=112", note:"2021년판 편람입니다."},
-  {title:"각급학교 표준 개인정보파일 목록", cat:"정보·개인정보", org:"광주서부교육지원청", board:"정보공개 자료실", date:"2020-07-23", fmt:["hwp"], access:"open", region:"구 광주", url:"https://seobu.jge.go.kr/board.php?id=112", note:"학교 개인정보파일 등록·점검 때 기준으로 쓰는 목록입니다."},
-  {title:"개인정보보호 업무 이행 자체 점검 매뉴얼", cat:"정보·개인정보", org:"광주서부교육지원청", board:"정보공개 자료실", date:"2020-05-08", fmt:["hwp"], access:"open", region:"구 광주", url:"https://seobu.jge.go.kr/board.php?id=112", note:"자체 점검표가 들어 있습니다."},
-  {title:"장학생 월별 학업·진로활동 모니터링 서식", cat:"학생·장학", org:"광주 희망사다리 교육재단", board:"희망사다리 공지사항", date:"2026-04-20", fmt:["hwp"], access:"open", region:"구 광주", url:"https://nanum.jge.go.kr/xboard/board.php?tbnum=2", note:"희망사다리 장학생 담당 교사가 매월 작성하는 양식입니다."},
-  {title:"학교급식 식재료 안전성 강화 교육 교재 (2026)", cat:"급식·보건", org:"학교급식정보센터", board:"정보·홍보마당 자료실", date:"2026", fmt:["pdf"], access:"open", region:"구 광주", url:"https://food.jge.go.kr/main/main.php", note:"원산지 표시, 축산물 이력제, 방사능 식재료 교육 교재입니다. 서식보다는 교육 자료입니다."},
-  {title:"학원·교습소·개인과외교습자 관련 민원 서식 목록표", cat:"민원·대외", org:"광주동부교육지원청", board:"교습소 민원 안내", date:"", fmt:["hwp"], access:"open", region:"구 광주", url:"https://dongbu.jge.go.kr/page.php?id=27", note:"교습소 설립·변경 신고서 등. 학교 업무보다는 민원용입니다."},
-  {title:"학교업무최적화지원시스템 (업무편람·지침·감사길라잡이)", cat:"업무 매뉴얼(통합)", org:"(구)광주광역시교육청", board:"학교업무최적화지원시스템", date:"", fmt:["hwp","pdf"], access:"login", region:"구 광주", url:"https://www.gen.go.kr/xmanual/main/main.php", note:"경북 학교지원종합자료실과 가장 비슷한 통합 자료실이지만 교직원 로그인이 필요합니다. 이 꾸러미에는 파일을 옮기지 않습니다."}
-];
+function parseCSV(text){
+  text = text.replace(/^\uFEFF/, "");
+  const rows = []; let row = [], f = "", q = false;
+  for(let i=0;i<text.length;i++){
+    const c = text[i];
+    if(q){ if(c==='"'){ if(text[i+1]==='"'){ f+='"'; i++; } else q=false; } else f+=c; }
+    else if(c==='"') q=true;
+    else if(c===','){ row.push(f); f=""; }
+    else if(c==='\n' || c==='\r'){ if(c==='\r' && text[i+1]==='\n') i++; row.push(f); f=""; if(row.some(v=>v.trim()!=="")) rows.push(row); row=[]; }
+    else f+=c;
+  }
+  row.push(f); if(row.some(v=>v.trim()!=="")) rows.push(row);
+  const head = rows.shift().map(h=>h.trim());
+  return rows.map(r=>Object.fromEntries(head.map((h,i)=>[h,(r[i]||"").trim()])));
+}
+async function loadCSV(path){
+  const res = await fetch(path, {cache:"no-cache"});
+  if(!res.ok) throw new Error(path+" ("+res.status+")");
+  const buf = await res.arrayBuffer();
+  let text;
+  try{ text = new TextDecoder("utf-8",{fatal:true}).decode(buf); }
+  catch(e){ text = new TextDecoder("euc-kr").decode(buf); }
+  return parseCSV(text);
+}
+async function loadData(){
+  const [s,b] = await Promise.all([loadCSV("data/seosik.csv"), loadCSV("data/boards.csv")]);
+  SEOSIK = s.filter(r=>r["서식명"]).map(r=>({
+    cat: r["분류"]||"기타", title: r["서식명"], org: r["기관"], board: r["게시판"], date: r["게시일"],
+    fmt: (r["파일형식"]||"").split(/[\/·,\s]+/).filter(Boolean),
+    access: /login|로그인/i.test(r["공개여부"]) ? "login" : "open",
+    region: r["적용지역"]||"공통", url: r["원문주소"], note: r["메모"]
+  }));
+  SEOSIK.forEach(d=>{ if(!CATS.includes(d.cat)) CATS.push(d.cat); });
+  BOARDS = b.filter(r=>r["주소"]).map(r=>({name:r["게시판"], org:r["기관"], url:r["주소"]}));
+}
 
 /* ── 화면 ───────────────────────────────────────────── */
 const $ = s => document.querySelector(s);
@@ -251,7 +259,9 @@ $("#chips").addEventListener("click", e=>{ const b = e.target.closest(".chip"); 
 $("#list").addEventListener("click", e=>{ const r = e.target.closest(".row"); if(!r) return; state.sel = +r.dataset.i; renderList(); });
 $("#list").addEventListener("keydown", e=>{ if(e.key==="Enter"||e.key===" "){ const r = e.target.closest(".row"); if(r){ e.preventDefault(); state.sel = +r.dataset.i; renderList(); document.querySelector(`.row[data-i="${state.sel}"]`)?.focus(); } } });
 
-renderChips(); renderList(); renderBoards();
+$("#list").innerHTML = `<div class="empty">서식 목록을 불러오는 중입니다…</div>`;
+loadData().then(()=>{ renderChips(); renderList(); renderBoards(); })
+  .catch(err=>{ $("#list").innerHTML = `<div class="empty">서식 목록을 불러오지 못했습니다. data 폴더의 CSV 파일 이름과 위치를 확인해 주세요. (${esc(err.message)})</div>`; });
 </script>
 </body>
 </html>
