@@ -39,6 +39,40 @@ let fails = 0; const ok = (c, m) => { console.log((c ? "PASS " : "FAIL ") + m); 
   await page.fill("#q", "녹두"); await page.click('.card button[data-act=detail]');
   ok(await page.locator("#dlgBody", { hasText: "2018" }).count() === 1 && /1980년 당시 사진이 아닙니다/.test(await page.locator("#dlgBody").textContent()), "녹두서점 2018 촬영연도 · 경고");
   await page.click("#dlgClose"); await page.click("#btnReset"); await page.selectOption("#courseSel", "");
+  // 코스 D·E·F
+  await page.selectOption("#courseSel", "D"); await page.check('input[value=events]');
+  let st = await page.locator("#coursePanel li").allTextContents();
+  ok(st.length === 5 && st[0].includes("1926") && st[2].includes("11월 1일") && /참고 자료/.test(await page.locator("#coursePanel").textContent()), "코스 D 사건 5단계·참고 자료 표시");
+  ok(await page.locator('line[data-line=events]').count() === 4, "코스 D 사건 연결선 4개");
+  await page.check('input[value=tour]'); st = await page.locator("#coursePanel li").allTextContents();
+  ok(st.length === 8 && await page.locator('line[data-line=tour]').count() === 7, "코스 D 답사 8곳·실선 7개");
+  await page.check('input[value=events]');
+  await page.selectOption("#courseSel", "E"); st = await page.locator("#coursePanel li").allTextContents();
+  ok(st.length === 6 && /표기 차이/.test(st[4]), "코스 E 6단계·동척 연도 표기 차이 유지");
+  await page.selectOption("#courseSel", "F"); st = await page.locator("#coursePanel li").allTextContents();
+  ok(st.length === 3 && st[2].includes("1910"), "코스 F 3단계");
+  await page.selectOption("#courseSel", "");
+  // 내 코스 만들기
+  await page.fill("#q", "광주여자"); await page.click('.card[data-id="ik-145"] button[data-act=pick]'); await page.fill("#q", "");
+  await page.click('.card[data-id=sufia] button[data-act=pick]'); await page.click('.card[data-id=geumnam] button[data-act=pick]');
+  await page.click("#btnMyCourse"); await page.fill("#mcTitle", "우리 학교 앞 코스");
+  for (const id of ["sufia", "geumnam", "ik-145"]) await page.click(`#mcBody [data-mc=add][data-id="${id}"]`);
+  ok(await page.locator("#mcList li").count() === 3, "내 코스 3곳 추가");
+  await page.click('#mcList li:nth-child(3) [data-mc=up]');
+  ok((await page.locator("#mcList li").nth(1).textContent()).includes("광주공립여자"), "순서 위로 이동");
+  await page.fill("#mcQuestion", "<b>질문</b> 이 코스에서 공통점은?");
+  await page.click("#mcBody [data-mc=save]");
+  ok(!(await page.locator("#courseDlg").evaluate(d => d.open)) && (await page.locator("#courseSel option:checked").textContent()).includes("우리 학교 앞 코스"), "내 코스 저장 후 자동 선택");
+  st = await page.locator("#coursePanel li").allTextContents();
+  ok(st.length === 3 && st[1].includes("광주공립여자") && await page.locator("#modeBox").isHidden(), "내 코스 3단계·모드 선택 숨김");
+  ok(/교사가 직접 구성/.test(await page.locator("#coursePanel").textContent()) && await page.locator("#coursePanel b").count() > 0 && await page.evaluate(() => !document.querySelector("#coursePanel [onerror]")), "내 코스 면책 문구·HTML 이스케이프");
+  await page.reload(); ok((await page.locator("#courseSel option", { hasText: "우리 학교 앞 코스" }).count()) === 1, "새로고침 후 내 코스 유지");
+  await page.selectOption("#courseSel", { label: "내 코스 · 우리 학교 앞 코스" }); await page.click("#btnPrint");
+  ok((await page.locator("#printArea").textContent()).includes("코스 순서") && !(await page.locator("#printArea").textContent()).includes("시간순 단계"), "내 코스 인쇄(사건 순서 없음)");
+  await page.click("#btnMyCourse"); await page.click('#mcBody [data-mc=remove]'); await page.click("#mcClose");
+  ok((await page.locator("#courseSel option", { hasText: "우리 학교 앞 코스" }).count()) === 0, "내 코스 삭제");
+  for (const id of ["sufia", "geumnam", "ik-145"]) { await page.fill("#q", ""); await page.click(`.card[data-id="${id}"] button[data-act=pick]`); }
+  await page.click("#btnReset");
   // 흐름 3
   await page.selectOption("#fRegion", "전남"); await page.fill("#q", "목포근대역사관");
   ok(await page.locator(".card").count() === 2 && /2곳/.test(await page.locator("#resultCount").textContent()), "전남 필터 2곳");

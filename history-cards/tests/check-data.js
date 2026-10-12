@@ -32,6 +32,7 @@ courses.forEach(c => {
   [...c.events.map(e => e.placeId), ...c.tour].forEach(i => { if (!ids.has(i)) err.push(c.id + " 코스 장소 없음 " + i); });
   if (c.confidence !== "RECONSTRUCTED") err.push(c.id + " 코스는 교육용 구성");
 });
+courses.forEach(c => (c.refSources || []).forEach(s => { if (!sids.has(s)) err.push(c.id + " 코스 참고 출처 없음 " + s); }));
 const B = courses.find(c => c.id === "B").events.map(e => e.placeId).join();
 if (B !== "nokdu,chonnam,geumnam,doncheong") err.push("코스 B 순서 오류");
 const m2 = places.find(p => p.id === "mokpo2"); if (!/1920~1921/.test(m2.eventDate)) err.push("2관 연도 표기");

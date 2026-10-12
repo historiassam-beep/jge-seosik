@@ -18,7 +18,7 @@
   }
 
   // ---------- 저장소 ----------
-  var state = { picked: [], notes: {} }, toastTimer;
+  var state = { picked: [], notes: {}, myCourses: [] }, toastTimer;
   function toast(msg, err) {
     var t = $(".toast"); if (!t) { t = document.createElement("div"); t.setAttribute("role", "status"); document.body.appendChild(t); }
     t.className = "toast" + (err ? " err" : ""); t.textContent = msg;
@@ -38,15 +38,35 @@
         var n = {}; FIELDS.forEach(function (f) { var v = o.notes[id][f[0]]; n[f[0]] = typeof v === "string" ? v.slice(0, MAXLEN) : ""; });
         notes[id] = n;
       });
-      state = { picked: picked, notes: notes };
+      var my = [];
+      if (Array.isArray(o.myCourses)) o.myCourses.forEach(function (m) {
+        if (!m || typeof m.id !== "string" || typeof m.title !== "string" || !Array.isArray(m.tour)) return;
+        var tour = m.tour.filter(function (id) { return typeof id === "string" && PLACE[id]; });
+        if (tour.length >= 2) my.push({ id: m.id.slice(0, 40), title: m.title.slice(0, 40), tour: tour, question: typeof m.question === "string" ? m.question.slice(0, 200) : "" });
+      });
+      state = { picked: picked, notes: notes, myCourses: my.slice(0, 20) };
     } catch (e) {
-      state = { picked: [], notes: {} };
+      state = { picked: [], notes: {}, myCourses: [] };
       toast("저장된 기록이 손상되어 초기화했습니다.", true);
     }
   }
   function save() {
     try { localStorage.setItem(KEY, JSON.stringify(state)); return true; }
     catch (e) { toast("저장하지 못했습니다(저장 공간 또는 브라우저 설정 확인). CSV로 내려받아 보관하세요.", true); return false; }
+  }
+  function courseById(id) {
+    var c = COURSES.filter(function (x) { return x.id === id; })[0]; if (c) return c;
+    var m = state.myCourses.filter(function (x) { return x.id === id; })[0];
+    return m ? { id: m.id, title: "내 코스 · " + m.title, confidence: "RECONSTRUCTED", events: null, tour: m.tour, mine: true,
+      disclaimer: "교사가 직접 구성한 학습 코스입니다. 실제 이동 경로나 사건 순서가 아니며, 순서는 구성한 사람이 정했습니다." + (m.question ? " 코스 질문: " + m.question : "") } : null;
+  }
+  function effMode() { var c = courseById(ui.course); return c && c.events ? ui.mode : "tour"; }
+  function fillCourseSelect() {
+    var sel = $("#courseSel"), cur = ui.course;
+    sel.innerHTML = '<option value="">코스 선택 안 함</option>' + COURSES.map(function (c) { return '<option value="' + esc(c.id) + '">' + esc(c.title) + "</option>"; }).join("") +
+      state.myCourses.map(function (m) { return '<option value="' + esc(m.id) + '">내 코스 · ' + esc(m.title) + "</option>"; }).join("");
+    if (!courseById(cur)) { ui.course = ""; cur = ""; }
+    sel.value = cur;
   }
   function isPicked(id) { return state.picked.indexOf(id) >= 0; }
   function togglePick(id) {
@@ -157,13 +177,13 @@
 
   // ---------- 코스 ----------
   function courseSteps() {
-    var c = COURSES.filter(function (x) { return x.id === ui.course; })[0]; if (!c) return null;
-    if (ui.mode === "tour") return c.tour.map(function (id, i) { return { placeId: id, label: (i + 1) + "번째 답사지 · " + PLACE[id].name }; });
+    var c = courseById(ui.course); if (!c) return null;
+    if (ui.mode === "tour" || !c.events) return c.tour.map(function (id, i) { return { placeId: id, label: (i + 1) + "번째 답사지 · " + PLACE[id].name }; });
     return c.events;
   }
   function renderCourse() {
-    var c = COURSES.filter(function (x) { return x.id === ui.course; })[0], panel = $("#coursePanel");
-    $("#modeBox").hidden = $("#stepNav").hidden = panel.hidden = !c;
+    var c = courseById(ui.course), panel = $("#coursePanel");
+    $("#stepNav").hidden = panel.hidden = !c; $("#modeBox").hidden = !c || !c.events;
     if (!c) return;
     var steps = courseSteps(); ui.step = Math.max(0, Math.min(ui.step, steps.length - 1));
     var cur = steps[ui.step], p = PLACE[cur.placeId];
@@ -171,9 +191,9 @@
     $("#stepPrev").disabled = ui.step === 0; $("#stepNext").disabled = ui.step === steps.length - 1;
     var pastTxt = hasPast(p) ? (p.photos.filter(function (x) { return x.type !== "current"; }).map(function (x) { return PHOTO_TYPE[x.type] + "(촬영연도 " + (x.shootingYear || "미상") + ")"; }).join(", ")) : "과거 사진 미확보";
     panel.innerHTML = "<p>" + badge(c.confidence) + " <b>" + esc(c.title) + "</b></p>" +
-      "<p>" + (ui.mode === "events" ? "과거 사건 연결(시간순) — 지도의 갈색 점선" : "현재 탐구(답사) 순서 — 지도의 올리브색 실선") + "</p>" +
+      "<p>" + (effMode() === "events" ? "과거 사건 연결(시간순) — 지도의 갈색 점선" : "현재 탐구(답사) 순서 — 지도의 올리브색 실선") + "</p>" +
       "<ol>" + steps.map(function (s, i) { return '<li class="' + (i === ui.step ? "cur" : "") + '"><button type="button" data-step="' + i + '">' + esc(s.label) + "</button></li>"; }).join("") + "</ol>" +
-      '<p class="note-warn">※ ' + esc(c.disclaimer) + "</p>" +
+      '<p class="note-warn">※ ' + esc(c.disclaimer) + "</p>" + (c.refSources ? '<p class="srcs">참고 자료: ' + c.refSources.map(srcLink).join(" · ") + "</p>" : "") +
       '<p id="stepInfo"><b>현재 단계: ' + esc(p.name) + "</b> (" + esc(p.eventDate) + ") " + badge(p.coordinate.accuracy, "위치: ") +
       "<br>위치 설명: " + esc(p.coordinate.note) + "<br>사진: <b>" + esc(pastTxt) + "</b></p>";
   }
@@ -273,9 +293,11 @@
       html += '<button type="button" class="mk' + (ui.selected === p.id ? " sel" : "") + (isPicked(p.id) ? " pick" : "") + '" data-id="' + esc(p.id) + '" style="left:' + q.x + "px;top:" + q.y + 'px" aria-label="' + esc(p.name + (num[p.id] ? " (" + num[p.id].join(",") + "단계)" : "")) + '"><span class="n">' + (num[p.id] ? num[p.id].join(",") : "●") + '</span><span class="lab">' + esc(p.name) + "</span></button>";
     });
     if (steps) for (var i = 1; i < steps.length; i++) {
-      var a = PLACE[steps[i - 1].placeId], b = PLACE[steps[i].placeId], pa = toPx(a.coordinate.latitude, a.coordinate.longitude), pb = toPx(b.coordinate.latitude, b.coordinate.longitude);
-      svg += '<line data-line="' + ui.mode + '" x1="' + pa.x + '" y1="' + pa.y + '" x2="' + pb.x + '" y2="' + pb.y + '" ' +
-        (ui.mode === "events" ? 'stroke="#8a5a2b" stroke-width="3" stroke-dasharray="9 7"' : 'stroke="#6b7a2a" stroke-width="4"') + "/>";
+      var a = PLACE[steps[i - 1].placeId], b = PLACE[steps[i].placeId];
+      if (!hasCoord(a) || !hasCoord(b)) continue;
+      var pa = toPx(a.coordinate.latitude, a.coordinate.longitude), pb = toPx(b.coordinate.latitude, b.coordinate.longitude);
+      svg += '<line data-line="' + effMode() + '" x1="' + pa.x + '" y1="' + pa.y + '" x2="' + pb.x + '" y2="' + pb.y + '" ' +
+        (effMode() === "events" ? 'stroke="#8a5a2b" stroke-width="3" stroke-dasharray="9 7"' : 'stroke="#6b7a2a" stroke-width="4"') + "/>";
     }
     svgEl.innerHTML = svg; markersEl.innerHTML = html;
   }
@@ -349,10 +371,10 @@
   }
   function buildPrint() {
     var ids = state.picked.length ? state.picked.slice() : (ui.selected ? [ui.selected] : []);
-    if (!ids.length) return "";
-    var h = "", steps = null, c = COURSES.filter(function (x) { return x.id === ui.course; })[0];
-    if (c) h += '<section class="ws"><h2>' + esc(c.title) + '</h2><p><b>' + esc(CONF[c.confidence]) + '</b> — 실제 역사적 이동 경로가 아닙니다.</p><h4>시간순 단계(과거 사건 연결)</h4><ol>' +
-      c.events.map(function (s) { return "<li>" + esc(s.label) + " — " + esc(PLACE[s.placeId].name) + "</li>"; }).join("") + '</ol><h4>현재 답사 순서</h4><ol>' +
+    var h = "", c = courseById(ui.course);
+    if (!ids.length && !c) return "";
+    if (c) h += '<section class="ws"><h2>' + esc(c.title) + '</h2><p><b>' + esc(CONF[c.confidence]) + '</b> — 실제 역사적 이동 경로가 아닙니다.</p>' + (c.events ? '<h4>시간순 단계(과거 사건 연결)</h4><ol>' +
+      c.events.map(function (s) { return "<li>" + esc(s.label) + " — " + esc(PLACE[s.placeId].name) + "</li>"; }).join("") + '</ol>' : "") + '<h4>' + (c.events ? "현재 답사 순서" : "코스 순서") + '</h4><ol>' +
       c.tour.map(function (id) { return "<li>" + esc(PLACE[id].name) + "</li>"; }).join("") + '</ol><p class="caution">' + esc(c.disclaimer) + "</p></section>";
     ids.forEach(function (id) {
       var p = PLACE[id], n = noteOf(id);
@@ -368,6 +390,48 @@
   function doPrint() {
     var h = buildPrint(); if (!h) { toast("담은 장소가 없습니다. 장소를 담거나 선택한 뒤 인쇄하세요.", true); return; }
     $("#printArea").innerHTML = h; window.print();
+  }
+
+  // ---------- 내 코스 만들기 ----------
+  var draft = { title: "", tour: [], question: "" };
+  function renderMyCourse() {
+    var body = $("#mcBody"), pickedLeft = state.picked.filter(function (id) { return draft.tour.indexOf(id) < 0; });
+    body.innerHTML =
+      '<label for="mcTitle">코스 이름 (40자까지)</label><input id="mcTitle" type="text" maxlength="40" value="' + esc(draft.title) + '" autocomplete="off">' +
+      "<h3>코스 순서 (" + draft.tour.length + "곳)</h3>" +
+      (draft.tour.length ? '<ol id="mcList">' + draft.tour.map(function (id, i) {
+        return "<li><span>" + esc(PLACE[id].name) + '</span> <button type="button" class="ghost" data-mc="up" data-i="' + i + '" aria-label="위로">↑</button><button type="button" class="ghost" data-mc="down" data-i="' + i + '" aria-label="아래로">↓</button><button type="button" class="ghost" data-mc="del" data-i="' + i + '" aria-label="뺌">✕</button></li>';
+      }).join("") + "</ol>" : '<p class="note-warn">아래 "수업에 담은 장소"에서 추가하세요. 먼저 카드에서 장소를 담아야 합니다.</p>') +
+      "<h3>수업에 담은 장소</h3>" + (pickedLeft.length ? '<ul class="mc-add">' + pickedLeft.map(function (id) { return "<li><span>" + esc(PLACE[id].name) + '</span> <button type="button" data-mc="add" data-id="' + esc(id) + '">추가</button></li>'; }).join("") + "</ul>" : "<p>추가할 장소가 없습니다.</p>") +
+      '<label for="mcQuestion">코스 질문 (200자까지, 개인정보 입력 금지)</label><textarea id="mcQuestion" maxlength="200">' + esc(draft.question) + "</textarea>" +
+      '<div class="cardbtns"><button type="button" data-mc="save"' + (draft.tour.length < 2 ? " disabled" : "") + ">코스 저장 (2곳 이상)</button></div>" +
+      "<h3>저장한 내 코스</h3>" + (state.myCourses.length ? '<ul class="mc-add">' + state.myCourses.map(function (m) { return "<li><span>" + esc(m.title) + " (" + m.tour.length + '곳)</span> <button type="button" class="ghost" data-mc="remove" data-id="' + esc(m.id) + '">삭제</button></li>'; }).join("") + "</ul>" : "<p>아직 없습니다.</p>");
+  }
+  function openMyCourse() { renderMyCourse(); var d = $("#courseDlg"); if (!d.open) { if (d.showModal) d.showModal(); else d.setAttribute("open", ""); } }
+  function bindMyCourse() {
+    $("#btnMyCourse").addEventListener("click", openMyCourse);
+    $("#mcClose").addEventListener("click", function () { $("#courseDlg").close(); });
+    $("#mcBody").addEventListener("input", function (e) {
+      if (e.target.id === "mcTitle") draft.title = e.target.value.slice(0, 40);
+      if (e.target.id === "mcQuestion") draft.question = e.target.value.slice(0, 200);
+    });
+    $("#mcBody").addEventListener("click", function (e) {
+      var b = e.target.closest("[data-mc]"); if (!b) return;
+      var act = b.getAttribute("data-mc"), i = +b.getAttribute("data-i"), id = b.getAttribute("data-id");
+      if (act === "add") draft.tour.push(id);
+      else if (act === "del") draft.tour.splice(i, 1);
+      else if (act === "up" && i > 0) { var t = draft.tour[i]; draft.tour[i] = draft.tour[i - 1]; draft.tour[i - 1] = t; }
+      else if (act === "down" && i < draft.tour.length - 1) { var u = draft.tour[i]; draft.tour[i] = draft.tour[i + 1]; draft.tour[i + 1] = u; }
+      else if (act === "save") {
+        if (draft.tour.length < 2) return;
+        if (state.myCourses.length >= 20) { toast("내 코스는 20개까지 저장할 수 있습니다.", true); return; }
+        var m = { id: "my-" + Date.now().toString(36), title: (draft.title.trim() || "내 코스 " + (state.myCourses.length + 1)), tour: draft.tour.slice(), question: draft.question };
+        state.myCourses.push(m); save(); fillCourseSelect(); ui.course = m.id; ui.step = 0; $("#courseSel").value = m.id;
+        draft = { title: "", tour: [], question: "" }; toast("내 코스를 저장했습니다."); $("#courseDlg").close();
+        var s = courseSteps(); if (s) select(s[0].placeId, true); renderAll(); return;
+      } else if (act === "remove") { state.myCourses = state.myCourses.filter(function (x) { return x.id !== id; }); if (ui.course === id) ui.course = ""; save(); fillCourseSelect(); renderAll(); }
+      renderMyCourse();
+    });
   }
 
   // ---------- 이벤트 ----------
@@ -438,8 +502,8 @@
       var n = PLACES.filter(function (p) { return p.category === name; }).length, o = document.createElement("option");
       o.value = name; o.textContent = name + (n ? "" : " (준비 중)"); $("#fCat").appendChild(o);
     });
-    COURSES.forEach(function (c) { var o = document.createElement("option"); o.value = c.id; o.textContent = c.title; $("#courseSel").appendChild(o); });
-    load(); initMap(); bind(); renderAll(); fit("all");
+    load(); fillCourseSelect(); initMap(); bind(); renderAll(); fit("all");
+    bindMyCourse();
     window.HC_TEST = { csvCell: csvCell, buildCsv: buildCsv, buildPrint: buildPrint, state: function () { return state; } };
   }
   init();

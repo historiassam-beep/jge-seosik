@@ -177,5 +177,34 @@ window.HC.courses = [
   { id: "C", title: "코스 C · 목포의 두 근대 건축물", confidence: "RECONSTRUCTED",
     disclaimer: "역사적 행진 경로가 아닙니다. 건립 시기와 식민 통치 기능을 비교하기 위한 교육용 코스입니다.",
     events: [{ placeId: "mokpo1", label: "1관 · 구 일본영사관(외교·행정 기능)" }, { placeId: "mokpo2", label: "2관 · 구 동양척식주식회사 목포지점(경제 수탈 기능)" }],
-    tour: ["mokpo1", "mokpo2"] }
+    tour: ["mokpo1", "mokpo2"] },
+  { id: "D", title: "코스 D · 광주학생운동의 현장(광주)", confidence: "RECONSTRUCTED", refSources: ["ik-road", "ik-sites"],
+    disclaimer: "장소 목록은 독립기념관 나라사랑역사의길(광주학생운동의 현장) 답사 순서를 참고했고, 사건 순서는 사적지 목록의 설명 문장에서 읽을 수 있는 시기만 연결한 교육용 구성입니다. 독서회 조직 시기는 연도만 기재되어 있어 선후는 원문 확인이 필요합니다. 실제 이동 경로가 아닙니다.",
+    events: [
+      { placeId: "ik-148", label: "1926년 · 광주고보 학생들이 성진회에 가담" },
+      { placeId: "ik-147", label: "1929년 · 독서회 중앙본부 거점(김기권문방구점)" },
+      { placeId: "oldstation", label: "1929년 11월 1일·3일 · 광주역 앞 한·일 학생 충돌" },
+      { placeId: "ik-270", label: "1929년 11월 3일 · 토교에서 학생들이 대치" },
+      { placeId: "ik-145", label: "1929년 11월 · 광주여고보 학생들이 시위에 동참" }
+    ],
+    tour: ["ik-148", "oldstation", "ik-145", "ik-270", "ik-147", "ik-146", "ik-149", "doncheong"] },
+  { id: "E", title: "코스 E · 목포의 침략과 저항", confidence: "RECONSTRUCTED", refSources: ["ik-road", "ik-sites"],
+    disclaimer: "장소 목록은 독립기념관 나라사랑역사의길(목포) 답사 순서를 참고했고, 사건 순서는 사적지 목록의 설명에 적힌 시기만 연결한 교육용 구성입니다. 동양척식 목포지점 건립 시기(1920~1921년 표기 차이)와 청년회관(1920년대)의 선후는 확정하지 않았습니다.",
+    events: [
+      { placeId: "mokpo1", label: "1900년 12월 · 일본영사관 건립(1906년 1월까지 영사관으로 사용)" },
+      { placeId: "ik-290", label: "1919년 4월 8일 · 목포 만세시위를 계획한 양동교회" },
+      { placeId: "ik-291", label: "1919년 · 영흥학교에서 3·1운동 준비" },
+      { placeId: "ik-196", label: "1919년 · 정명여학교 학생들의 만세시위(1920년대 학생운동으로 이어짐)" },
+      { placeId: "mokpo2", label: "1920~1921년(표기 차이) · 동양척식주식회사 목포지점 건물" },
+      { placeId: "ik-289", label: "1920년대 · 청년·신간회·여성운동의 중심 목포청년회관" }
+    ],
+    tour: ["mokpo2", "mokpo1", "ik-289", "ik-290", "ik-291", "ik-196"] },
+  { id: "F", title: "코스 F · 매천 황현의 삶과 순국(광양·구례)", confidence: "RECONSTRUCTED", refSources: ["ik-road", "ik-sites"],
+    disclaimer: "장소 목록은 독립기념관 나라사랑역사의길(황현, 광양·구례) 코스를 참고했습니다. 황현 은거지 터는 이 앱에 장소가 없어 뺐습니다. 광양과 구례를 잇는 선은 이동 경로가 아니라 교육용 연결선입니다.",
+    events: [
+      { placeId: "ik-198", label: "황현이 태어난 곳(광양 봉강면)" },
+      { placeId: "ik-319", label: "1908년 · 황현 등이 신학문 보급을 위해 호양학교 설립(구례)" },
+      { placeId: "ik-202", label: "1910년 · 일제 강점에 항거해 자결 순국한 곳(구례)" }
+    ],
+    tour: ["ik-198", "ik-319", "ik-202"] }
 ];

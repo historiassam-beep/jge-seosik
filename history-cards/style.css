@@ -108,3 +108,4 @@ dialog::backdrop{background:#0006}
 .note-warn{font-size:.82rem;color:var(--warn)}
 [hidden]{display:none!important}
 .grp{display:flex;flex-direction:column;gap:.8rem}.grp-h{position:sticky;top:0;background:var(--bg);padding:.4rem 0;border-bottom:2px solid var(--olive);z-index:3}
+#mcList,.mc-add{margin:.3rem 0;padding-left:1.2rem}#mcList li,.mc-add li{margin:.25rem 0}#mcList button,.mc-add button{padding:.15rem .5rem;margin-left:.25rem}.note input[type=text]{width:100%;padding:.4rem;border:1px solid var(--line);border-radius:6px;background:#fff}
