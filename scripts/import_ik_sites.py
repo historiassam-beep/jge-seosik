@@ -1,5 +1,5 @@
 """독립기념관 '국내사적지 위치정보' CSV에서 광주·전남 사적지를 뽑아 history-cards 데이터로 만든다.
-사용: python3 -I scripts/import_ik_sites.py <위치정보.csv> <전남광주_518사적지.csv>
+사용: python3 -I scripts/import_ik_sites.py <위치정보.csv>
 - 원본 설명을 그대로 쓰고 사실을 새로 만들지 않는다. 이미 손으로 만든 장소는 건너뛴다.
 """
 import csv, io, json, re, sys
@@ -43,15 +43,4 @@ open("history-cards/data/research/ik_sites_gwangju_jeonnam.csv", "w", encoding="
 open("history-cards/data/places_ik.js", "w", encoding="utf-8").write(
     "// scripts/import_ik_sites.py로 생성. 직접 고치지 말고 스크립트 또는 원본 CSV를 고칠 것.\n"
     "window.HC.places = window.HC.places.concat(" + json.dumps(places, ensure_ascii=False, indent=1) + ");\n")
-# 5·18 사적지 지정 현황은 연구용 CSV로만 보관(5·18 주제 확대 때 사용)
-b = list(csv.reader(io.StringIO(rd(sys.argv[2]))))
-o = io.StringIO(); cw = csv.writer(o)
-cw.writerow(["번호", "사적지명", "지정사유", "세부위치"])
-for r in b[1:]:
-    m = re.match(r"\s*(\d+(?:-\d+)?)\s+(.*)", r[0]) if r else None
-    if m: cw.writerow([m.group(1), sp(m.group(2)), sp(r[1]), sp(r[2])])
-    elif r:
-        m2 = re.match(r'(\d+)\s+(.*)', r[0])
-        cw.writerow([m2.group(1) if m2 else "", sp(m2.group(2) if m2 else r[0]), sp(r[1]), sp(r[2])])
-open("history-cards/data/research/518_sites_20260206.csv", "w", encoding="utf-8-sig", newline="").write(o.getvalue())
 print("광주·전남 사적지", len(keep), "곳 중 신규 장소", len(places), "곳 생성")

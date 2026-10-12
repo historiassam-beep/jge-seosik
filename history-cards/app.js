@@ -75,6 +75,11 @@
   }
 
   // ---------- 사진 ----------
+  function cardSources(p) {
+    var u = {}, ids = [];
+    p.coordinate.sourceIds.concat.apply(p.coordinate.sourceIds, p.facts.map(function (f) { return f.sourceIds; })).forEach(function (s) { if (SRC[s] && !u[s]) { u[s] = 1; ids.push(s); } });
+    return ids.map(function (s) { return '<a href="' + esc(safeUrl(SRC[s].url)) + '" target="_blank" rel="noopener noreferrer">' + esc(SRC[s].title) + "</a>"; }).join(" · ") || "없음(교육용 구성)";
+  }
   function hasCoord(p) { return p.coordinate.latitude != null && p.coordinate.longitude != null; }
   function photoFigure(ph) {
     var u = safeUrl(ph.url), h = '<figure class="ph">';
@@ -124,6 +129,7 @@
         '<p class="names"><b>당시 지명</b> ' + esc(p.historicalName) + "<br><b>현재 지명</b> " + esc(p.currentName) + "</p>" +
         "<p>" + esc(p.summary) + "</p>" +
         '<p class="q">생각해 볼 질문: ' + esc(p.inquiryQuestion) + "</p>" +
+        '<p class="srcs">출처: ' + cardSources(p) + "</p>" +
         '<div class="cardbtns"><button type="button" data-act="detail">자세히 보기</button>' +
         '<button type="button" class="ghost" data-act="find">지도에서 찾기</button>' +
         '<button type="button" class="ghost" data-act="pick" aria-pressed="' + pk + '">' + (pk ? "수업에서 빼기" : "수업에 담기") + "</button></div></article>";

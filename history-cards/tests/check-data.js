@@ -1,6 +1,6 @@
 // 데이터 점검: node tests/check-data.js
 global.window = {};
-require("../data/sources.js"); require("../data/places.js"); require("../data/places_ik.js"); require("../data/places_518jn.js");
+require("../data/sources.js"); require("../data/places.js"); require("../data/places_ik.js"); require("../data/places_518jn.js"); require("../data/places_518gj.js");
 const { places, sources, courses } = window.HC;
 const err = [];
 const unverified = sources.filter(s => /미확인/.test(s.checkedAt)).length, noUrl = places.reduce((n, p) => n + p.photos.filter(x => !x.url).length, 0);
@@ -13,6 +13,7 @@ need.forEach(i => { if (!ids.has(i)) err.push("필수 장소 없음 " + i); });
 const ST = ["현존","변형","용도 변경","건물 소멸","장소 기능 소멸","현장 확인 필요"], CF = ["FACT","PROBABLE","RECONSTRUCTED"];
 places.forEach(p => {
   ["name","region","category","eventDate","historicalName","currentName","currentAddress","summary","inquiryQuestion","teacherNote"].forEach(k => { if (!p[k]) err.push(p.id + " 빈 필드 " + k); });
+  if (!p.facts.some(f => f.sourceIds.length) && !p.coordinate.sourceIds.length) err.push(p.id + " 출처 없음");
   if (!ST.includes(p.status)) err.push(p.id + " status");
   if (!["광주","전남"].includes(p.region)) err.push(p.id + " region");
   if (!window.HC.categories.includes(p.category)) err.push(p.id + " category");
