@@ -3,6 +3,7 @@
 window.HC = window.HC || {};
 const U = "미확인 · 원문 접속 확인 필요";
 window.HC.sources = [
+  { id: "ys-list", organization: "여수시 (여순사건 홈페이지, 목록은 사용자 제공 텍스트)", title: "여순사건 유적지 목록 — 여수·순천·광양·구례·보성·고흥 97곳", url: "https://www.yeosu.go.kr/yeosun1019/historical-site", sourceType: "공식기관", checkedAt: "2026-10-12 (사용자 제공 목록 확인, 원문 페이지는 열지 못함)", licenseNote: "페이지 구성·이용조건 미확인. 이름·주소만 옮김" },
   { id: "518org-jn", organization: "518.org (5·18 사적지 안내, 운영 기관 확인 필요)", title: "전남 5·18 사적지 목록(전체 29건, 사용자 제공 캡처 PDF 4개)", url: "https://518.org/base/road/place/list?type=1&menuLevel=3&menuNo=7", sourceType: "공식기관", checkedAt: "2026-10-12 (제공 캡처 확인)", licenseNote: "페이지 표기: 출처표시-비상업적-변경금지(공공누리 4유형). 사진은 가져오지 않았고 이름·주소만 옮김" },
   // 아래 두 건은 사용자가 제공한 공공데이터 파일을 직접 열어 확인했다(개별 데이터셋 주소·이용허락 조건은 확인 필요).
   { id: "ik-sites", organization: "독립기념관", title: "독립기념관_국내사적지 위치정보_20161117 (공공데이터 파일)", url: "https://www.data.go.kr/", sourceType: "공식기관", checkedAt: "2026-10-12 (제공 파일 확인)", licenseNote: "공공데이터포털 파일데이터. 데이터셋별 이용허락 범위 확인 필요. 2016년 기준 자료" },

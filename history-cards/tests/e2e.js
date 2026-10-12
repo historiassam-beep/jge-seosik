@@ -58,8 +58,13 @@ let fails = 0; const ok = (c, m) => { console.log((c ? "PASS " : "FAIL ") + m); 
   await page.fill("#q", "불로동"); ok(await page.locator(".card", { hasText: "작은 장터" }).count() === 1 && await page.locator(".card").count() === 1, "주소 검색(불로동)"); await page.click("#btnReset");
   await page.selectOption("#fCat", "5·18"); await page.selectOption("#fStatus", "changed");
   ok(await page.locator(".card").count() === 2, "복합 필터(5·18+변형)");
-  await page.selectOption("#fCat", "여순사건");
-  ok(await page.locator(".card").count() === 0 && /아직 등록되지 않았습니다/.test(await page.locator("#cards").textContent()), "여순사건 카테고리 준비 중 안내");
+  await page.click("#btnReset"); await page.selectOption("#fCat", "여순사건");
+  ok(await page.locator(".card").count() === 97 && /좌표 미확인 97곳/.test(await page.locator("#resultCount").textContent()), "여순사건 97곳(좌표 미확인)");
+  await page.selectOption("#fRegion", "경남"); ok(await page.locator(".card").count() === 1 && await page.locator(".card", { hasText: "애기섬" }).count() === 1, "경남 1곳(애기섬 학살지)");
+  await page.fill("#q", "낙안"); ok(await page.locator(".card", { hasText: "낙안 신전마을" }).count() === 0, "경남+낙안 조합 필터"); await page.fill("#q", "");
+  await page.selectOption("#fRegion", ""); await page.fill("#q", "구례"); ok(await page.locator(".card").count() >= 17, "구례 검색");
+  await page.fill("#q", "");
+  ok(await page.locator('.card[data-id="ys-yeosu-14"] .srcs', { hasText: "여순사건 유적지 목록" }).count() === 1 && await page.locator('.card[data-id="ys-yeosu-14"]', { hasText: "제14연대 주둔지" }).count() === 1, "제14연대 주둔지 카드·출처");
   await page.click("#btnReset");
   // 흐름 4
   await page.click('.card[data-id=nokdu] button[data-act=pick]');

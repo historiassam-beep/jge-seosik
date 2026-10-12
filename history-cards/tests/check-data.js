@@ -1,6 +1,6 @@
 // 데이터 점검: node tests/check-data.js
 global.window = {};
-require("../data/sources.js"); require("../data/places.js"); require("../data/places_ik.js"); require("../data/places_518jn.js"); require("../data/places_518gj.js");
+require("../data/sources.js"); require("../data/places.js"); require("../data/places_ik.js"); require("../data/places_518jn.js"); require("../data/places_518gj.js"); require("../data/places_yeosun.js");
 const { places, sources, courses } = window.HC;
 const err = [];
 const unverified = sources.filter(s => /미확인/.test(s.checkedAt)).length, noUrl = places.reduce((n, p) => n + p.photos.filter(x => !x.url).length, 0);
@@ -15,7 +15,7 @@ places.forEach(p => {
   ["name","region","category","eventDate","historicalName","currentName","currentAddress","summary","inquiryQuestion","teacherNote"].forEach(k => { if (!p[k]) err.push(p.id + " 빈 필드 " + k); });
   if (!p.facts.some(f => f.sourceIds.length) && !p.coordinate.sourceIds.length) err.push(p.id + " 출처 없음");
   if (!ST.includes(p.status)) err.push(p.id + " status");
-  if (!["광주","전남"].includes(p.region)) err.push(p.id + " region");
+  if (!["광주","전남","경남"].includes(p.region)) err.push(p.id + " region");
   if (!window.HC.categories.includes(p.category)) err.push(p.id + " category");
   if (!["FACT","PROBABLE"].includes(p.coordinate.accuracy)) err.push(p.id + " accuracy");
   const c = p.coordinate; if (c.latitude !== null && !(c.latitude > 33 && c.latitude < 39 && c.longitude > 124 && c.longitude < 130)) err.push(p.id + " 좌표 범위");
