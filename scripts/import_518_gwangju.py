@@ -13,7 +13,7 @@ def rd(p):
 def sp(s): return re.sub(r"\s+", " ", (s or "").strip())
 old = {}
 if os.path.exists(OUT):
-    for r in csv.DictReader(open(OUT, encoding="utf-8-sig")): old[r["번호"]] = (r["위도"], r["경도"])
+    for r in csv.DictReader(open(OUT, encoding="utf-8-sig")): old[r["번호"]] = (r["위도"], r["경도"], r.get("변환정확도", ""))
 rows = []
 for r in list(csv.reader(io.StringIO(rd(sys.argv[1]))))[1:]:
     if not r: continue
@@ -25,12 +25,12 @@ for r in list(csv.reader(io.StringIO(rd(sys.argv[1]))))[1:]:
     name = FIX.get(name, name)
     if name.startswith("광목간"): name = name  # 원문 표기 유지
     loc = sp(r[2])
-    rows.append([no, name, sp(r[1]), loc, "광주광역시 " + loc, *old.get(no, ("", ""))])
+    rows.append([no, name, sp(r[1]), loc, "광주광역시 " + loc, *old.get(no, ("", "", ""))])
 assert len(rows) == 33, len(rows)  # 번호 1~30, 5번은 5-1~5-4로 나뉨
 w = csv.writer(open(OUT, "w", encoding="utf-8-sig", newline=""))
-w.writerow(["번호", "사적지명", "지정사유", "세부위치", "주소_전체", "위도", "경도"]); w.writerows(rows)
+w.writerow(["번호", "사적지명", "지정사유", "세부위치", "주소_전체", "위도", "경도", "변환정확도"]); w.writerows(rows)
 out = []
-for no, name, why, loc, full, la, lo in rows:
+for no, name, why, loc, full, la, lo, acc in rows:
     if no in SKIP: continue
     ok = bool(la and lo)
     out.append({
@@ -39,7 +39,7 @@ for no, name, why, loc, full, la, lo in rows:
         "historicalName": "(자료에 별도 표기 없음)", "currentName": "(자료에 별도 표기 없음)",
         "currentAddress": full, "status": "현장 확인 필요",
         "coordinate": {"latitude": float(la) if ok else None, "longitude": float(lo) if ok else None, "accuracy": "PROBABLE",
-                       "note": ("주소를 변환한 좌표입니다. 사적지의 정확한 지점과 다를 수 있어 현장 확인이 필요합니다." if ok else "원본 목록에 좌표가 없어 지도에 표시하지 않습니다. 주소를 좌표로 바꾼 뒤 현장에서 대조해야 합니다."), "sourceIds": ["gj518-list"]},
+                       "note": ("주소를 변환한 좌표입니다(" + (acc or "정확도 미기재") + "). 사적지의 정확한 지점과 다를 수 있어 현장 확인이 필요합니다." if ok else "원본 목록에 좌표가 없어 지도에 표시하지 않습니다. 주소를 좌표로 바꾼 뒤 현장에서 대조해야 합니다."), "sourceIds": ["gj518-list"]},
         "summary": why,
         "facts": [{"confidence": "FACT", "text": "5·18 사적지 지정 현황(2026-02-06)에 " + no + "번 '" + name + "'으로 지정되어 있습니다. 지정 사유: " + why + " / 세부 위치: " + loc, "sourceIds": ["gj518-list"]}],
         "photos": [],

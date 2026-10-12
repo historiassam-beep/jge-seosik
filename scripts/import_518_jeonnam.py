@@ -14,7 +14,7 @@ for i, r in enumerate(rows, 1):
         "historicalName": "(자료에 별도 표기 없음)", "currentName": "(자료에 별도 표기 없음)",
         "currentAddress": full, "status": "현장 확인 필요",
         "coordinate": {"latitude": float(la) if ok else None, "longitude": float(lo) if ok else None, "accuracy": "PROBABLE",
-                       "note": ("주소를 변환한 좌표입니다. 사적지의 정확한 지점과 다를 수 있어 현장 확인이 필요합니다." if ok else "원본 목록에 좌표가 없어 지도에 표시하지 않습니다. 주소를 좌표로 바꾼 뒤 현장에서 대조해야 합니다."), "sourceIds": ["518org-jn"]},
+                       "note": ("주소를 변환한 좌표입니다(" + (r.get("변환정확도") or "정확도 미기재") + "). 사적지의 정확한 지점과 다를 수 있어 현장 확인이 필요합니다." if ok else "원본 목록에 좌표가 없어 지도에 표시하지 않습니다. 주소를 좌표로 바꾼 뒤 현장에서 대조해야 합니다."), "sourceIds": ["518org-jn"]},
         "summary": "전남 5·18사적지 " + r["호수"] + "입니다. 사건 설명은 아직 입력하지 않았습니다(원문에서 확인 필요).",
         "facts": [{"confidence": "FACT", "text": "전남 5·18사적지 목록(전체 29건)에 '" + r["호수"] + " 5·18사적지'로 등록되어 있으며, 원문 표기 주소는 '" + raw + "'입니다.", "sourceIds": ["518org-jn"]}],
         "photos": [],
