@@ -3,6 +3,7 @@
 window.HC = window.HC || {};
 const U = "미확인 · 원문 접속 확인 필요";
 window.HC.sources = [
+  { id: "518org-jn", organization: "518.org (5·18 사적지 안내, 운영 기관 확인 필요)", title: "전남 5·18 사적지 목록(전체 29건, 사용자 제공 캡처 PDF 4개)", url: "https://518.org/base/road/place/list?type=1&menuLevel=3&menuNo=7", sourceType: "공식기관", checkedAt: "2026-10-12 (제공 캡처 확인)", licenseNote: "페이지 표기: 출처표시-비상업적-변경금지(공공누리 4유형). 사진은 가져오지 않았고 이름·주소만 옮김" },
   // 아래 두 건은 사용자가 제공한 공공데이터 파일을 직접 열어 확인했다(개별 데이터셋 주소·이용허락 조건은 확인 필요).
   { id: "ik-sites", organization: "독립기념관", title: "독립기념관_국내사적지 위치정보_20161117 (공공데이터 파일)", url: "https://www.data.go.kr/", sourceType: "공식기관", checkedAt: "2026-10-12 (제공 파일 확인)", licenseNote: "공공데이터포털 파일데이터. 데이터셋별 이용허락 범위 확인 필요. 2016년 기준 자료" },
   { id: "gj518-list", organization: "전남광주통합특별시", title: "518사적지 지정 현황_20260206 (공공데이터 파일)", url: "https://www.data.go.kr/", sourceType: "공식기관", checkedAt: "2026-10-12 (제공 파일 확인)", licenseNote: "공공데이터포털 파일데이터. 데이터셋별 이용허락 범위 확인 필요" },

@@ -1,6 +1,6 @@
 // 데이터 점검: node tests/check-data.js
 global.window = {};
-require("../data/sources.js"); require("../data/places.js"); require("../data/places_ik.js");
+require("../data/sources.js"); require("../data/places.js"); require("../data/places_ik.js"); require("../data/places_518jn.js");
 const { places, sources, courses } = window.HC;
 const err = [];
 const unverified = sources.filter(s => /미확인/.test(s.checkedAt)).length, noUrl = places.reduce((n, p) => n + p.photos.filter(x => !x.url).length, 0);
@@ -17,7 +17,7 @@ places.forEach(p => {
   if (!["광주","전남"].includes(p.region)) err.push(p.id + " region");
   if (!window.HC.categories.includes(p.category)) err.push(p.id + " category");
   if (!["FACT","PROBABLE"].includes(p.coordinate.accuracy)) err.push(p.id + " accuracy");
-  const c = p.coordinate; if (!(c.latitude > 33 && c.latitude < 39 && c.longitude > 124 && c.longitude < 130)) err.push(p.id + " 좌표 범위");
+  const c = p.coordinate; if (c.latitude !== null && !(c.latitude > 33 && c.latitude < 39 && c.longitude > 124 && c.longitude < 130)) err.push(p.id + " 좌표 범위");
   [...c.sourceIds, ...p.facts.flatMap(f => f.sourceIds), ...p.photos.map(x => x.sourceId)].forEach(s => { if (!sids.has(s)) err.push(p.id + " 없는 출처 " + s); });
   p.facts.forEach(f => { if (!CF.includes(f.confidence)) err.push(p.id + " confidence"); if (f.confidence !== "RECONSTRUCTED" && !f.sourceIds.length) err.push(p.id + " 출처 없는 사실"); });
   if (!window.HC.categories.includes(p.category)) err.push("cat");

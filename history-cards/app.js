@@ -75,6 +75,7 @@
   }
 
   // ---------- 사진 ----------
+  function hasCoord(p) { return p.coordinate.latitude != null && p.coordinate.longitude != null; }
   function photoFigure(ph) {
     var u = safeUrl(ph.url), h = '<figure class="ph">';
     if (u) h += '<span class="imgwrap"><img class="hc-img" src="' + esc(u) + '" alt="' + esc(ph.caption) + '" loading="lazy" data-src="' + esc(u) + '" data-source="' + esc(SRC[ph.sourceId] ? SRC[ph.sourceId].url : "") + '"></span>';
@@ -110,7 +111,8 @@
   // ---------- 카드 ----------
   function renderCards() {
     var list = filtered(), box = $("#cards");
-    $("#resultCount").textContent = "검색 결과 " + list.length + "곳 / 전체 " + PLACES.length + "곳";
+    var noMap = list.filter(function (p) { return !hasCoord(p); }).length;
+    $("#resultCount").textContent = "검색 결과 " + list.length + "곳 / 전체 " + PLACES.length + "곳" + (noMap ? " (좌표 미확인 " + noMap + "곳은 지도에 표시되지 않음)" : "");
     if (!list.length) { var soon = (ui.cat && !PLACES.some(function (p) { return p.category === ui.cat; })) ? ui.cat : ((ui.era && !PLACES.some(function (p) { return p.era === ui.era; })) ? ui.era : "");
       box.innerHTML = '<div class="empty"><p><b>' + (soon ? esc(soon) + " 장소는 아직 등록되지 않았습니다(자료 확인 후 추가 예정)." : "조건에 맞는 장소가 없습니다.") + "</b></p><p>검색어나 필터를 바꾸거나 초기화해 보세요.</p></div>"; return; }
     box.innerHTML = list.map(function (p) {
@@ -118,7 +120,7 @@
       return '<article class="card' + (ui.selected === p.id ? " sel" : "") + '" data-id="' + esc(p.id) + '">' +
         "<h3>" + esc(p.name) + "</h3>" +
         '<div class="meta"><span class="tag">' + esc(p.region) + '</span><span class="tag">' + esc(p.category) + '</span><span class="tag">' + esc(p.eventDate) + '</span><span class="tag">상태: ' + esc(p.status) + "</span>" +
-        badge(p.coordinate.accuracy, "위치: ") + "</div>" + cardThumb(p) +
+        badge(p.coordinate.accuracy, "위치: ") + (hasCoord(p) ? "" : '<span class="tag">지도 좌표 미확인</span>') + "</div>" + cardThumb(p) +
         '<p class="names"><b>당시 지명</b> ' + esc(p.historicalName) + "<br><b>현재 지명</b> " + esc(p.currentName) + "</p>" +
         "<p>" + esc(p.summary) + "</p>" +
         '<p class="q">생각해 볼 질문: ' + esc(p.inquiryQuestion) + "</p>" +
@@ -166,7 +168,7 @@
     var ids = {}; filtered().forEach(function (p) { ids[p.id] = 1; });
     var steps = courseSteps(); if (steps) steps.forEach(function (s) { ids[s.placeId] = 1; });
     if (ui.selected) ids[ui.selected] = 1;
-    return PLACES.filter(function (p) { return ids[p.id]; });
+    return PLACES.filter(function (p) { return ids[p.id] && hasCoord(p); });
   }
   function initMap() {
     mapEl.innerHTML = '<div class="tiles"></div><svg aria-hidden="true"></svg><div class="markers"></div>' +
@@ -210,6 +212,7 @@
   function zoomBy(d) { M.z = Math.max(5, Math.min(18, M.z + d)); drawMap(); }
   function fit(which) {
     var list = which === "all" ? PLACES : (which === "목포" ? PLACES.filter(function (p) { return p.currentAddress.indexOf("목포") >= 0; }) : PLACES.filter(function (p) { return p.region === which; }));
+    list = list.filter(hasCoord);
     if (!list.length) return;
     var la = list.map(function (p) { return p.coordinate.latitude; }), lo = list.map(function (p) { return p.coordinate.longitude; });
     var minLa = Math.min.apply(null, la), maxLa = Math.max.apply(null, la), minLo = Math.min.apply(null, lo), maxLo = Math.max.apply(null, lo);
@@ -217,7 +220,7 @@
     for (; z > 5; z--) { var a = proj(maxLa, minLo, z), b = proj(minLa, maxLo, z); if (b.x - a.x <= w && b.y - a.y <= h) break; }
     M.z = Math.min(z, 16); M.lat = (minLa + maxLa) / 2; M.lon = (minLo + maxLo) / 2; drawMap();
   }
-  function centerOn(p) { M.lat = p.coordinate.latitude; M.lon = p.coordinate.longitude; if (M.z < 13) M.z = 14; drawMap(); }
+  function centerOn(p) { if (!hasCoord(p)) { toast("이 장소는 아직 좌표가 없어 지도에 표시되지 않습니다. 주소: " + p.currentAddress); return; } M.lat = p.coordinate.latitude; M.lon = p.coordinate.longitude; if (M.z < 13) M.z = 14; drawMap(); }
   function drawMap() {
     if (!markersEl) return;
     var W = mapEl.clientWidth, H = mapEl.clientHeight; if (!W || !H) return;
