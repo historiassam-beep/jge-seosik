@@ -1,11 +1,12 @@
 // 데이터 점검: node tests/check-data.js
 global.window = {};
-require("../data/sources.js"); require("../data/places.js");
+require("../data/sources.js"); require("../data/places.js"); require("../data/places_ik.js");
 const { places, sources, courses } = window.HC;
 const err = [];
 const unverified = sources.filter(s => /미확인/.test(s.checkedAt)).length, noUrl = places.reduce((n, p) => n + p.photos.filter(x => !x.url).length, 0);
 const ids = new Set(places.map(p => p.id)), sids = new Set(sources.map(s => s.id));
 if (ids.size !== places.length) err.push("장소 id 중복");
+if (!places.every(p => window.HC.eras.includes(p.era))) err.push("era 누락");
 if (places.length < 9) err.push("장소 9곳 미만");
 const need = ["sufia","market1919","oldstation","chonnam","geumnam","doncheong","nokdu","mokpo1","mokpo2"];
 need.forEach(i => { if (!ids.has(i)) err.push("필수 장소 없음 " + i); });

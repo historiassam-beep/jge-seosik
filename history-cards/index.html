@@ -30,6 +30,9 @@
   <label>지역
     <select id="fRegion"><option value="">전체</option><option>광주</option><option>전남</option></select>
   </label>
+  <label>시대
+    <select id="fEra"><option value="">전체</option></select>
+  </label>
   <label>주제
     <select id="fCat"><option value="">전체</option></select>
   </label>
@@ -67,7 +70,8 @@
     <div class="maptools">
       <button type="button" data-fit="all">전체</button>
       <button type="button" data-fit="광주">광주</button>
-      <button type="button" data-fit="전남">목포</button>
+      <button type="button" data-fit="전남">전남 전체</button>
+      <button type="button" data-fit="목포">목포</button>
     </div>
     <div id="map" class="map" tabindex="0" role="application" aria-label="지도. 방향키로 이동, 더하기·빼기 키로 확대·축소"></div>
     <p id="mapMsg" class="mapmsg" hidden>배경 지도를 불러오지 못했습니다. 좌표 격자 위에서 장소 탐색은 계속할 수 있습니다.</p>
@@ -94,6 +98,7 @@
 
 <script src="data/sources.js"></script>
 <script src="data/places.js"></script>
+<script src="data/places_ik.js"></script>
 <script src="app.js"></script>
 </body>
 </html>

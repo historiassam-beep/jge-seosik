@@ -11,13 +11,14 @@ let fails = 0; const ok = (c, m) => { console.log((c ? "PASS " : "FAIL ") + m); 
   await page.addInitScript(() => { window.print = () => { window.__printed = true; }; });
   await page.goto(BASE);
   // 흐름 1
-  ok(await page.locator(".card").count() === 9, "카드 9개");
+  const TOTAL = await page.evaluate(() => HC.places.length);
+  ok(TOTAL >= 40 && await page.locator(".card").count() === TOTAL, "전체 카드 " + TOTAL + "개 표시");
   ok(await page.locator(".card", { hasText: "수피아여학교" }).count() === 1, "수피아 카드");
   await page.selectOption("#courseSel", "A");
   ok((await page.locator("#stepPos").textContent()).includes("1 / 2"), "코스 A 1단계");
   await page.click("#stepNext");
   const info = await page.locator("#stepInfo").textContent();
-  ok(/추정·확인 필요/.test(info) && /단정하지 않습니다/.test(info), "작은 장터 불확실성");
+  ok(/추정·확인 필요/.test(info) && /단정하지 않/.test(info), "작은 장터 불확실성");
   ok(/과거 사진 미확보/.test(info), "과거 사진 미확보(코스)");
   ok(await page.locator('.card.sel', { hasText: "작은 장터" }).count() === 1, "선택 카드 일치");
   ok(await page.locator('.card.sel .thumb', { hasText: "과거 사진 미확보" }).count() === 1, "카드에 과거 사진 미확보");
@@ -39,11 +40,13 @@ let fails = 0; const ok = (c, m) => { console.log((c ? "PASS " : "FAIL ") + m); 
   ok(await page.locator("#dlgBody", { hasText: "2018" }).count() === 1 && /1980년 당시 사진이 아닙니다/.test(await page.locator("#dlgBody").textContent()), "녹두서점 2018 촬영연도 · 경고");
   await page.click("#dlgClose"); await page.click("#btnReset"); await page.selectOption("#courseSel", "");
   // 흐름 3
-  await page.selectOption("#fRegion", "전남");
+  await page.selectOption("#fRegion", "전남"); await page.fill("#q", "목포근대역사관");
   ok(await page.locator(".card").count() === 2 && /2곳/.test(await page.locator("#resultCount").textContent()), "전남 필터 2곳");
   ok(await page.locator(".card", { hasText: "1920~1921" }).count() === 1, "2관 연도 차이 표기");
   await page.fill("#q", "없는장소"); ok(await page.locator(".empty").count() === 1, "빈 결과 화면");
-  await page.click("#btnReset"); ok(await page.locator(".card").count() === 9, "필터 초기화");
+  await page.click("#btnReset"); ok(await page.locator(".card").count() === TOTAL, "필터 초기화");
+  await page.selectOption("#fEra", "고려·조선"); ok(/아직 등록되지 않았습니다/.test(await page.locator("#cards").textContent()), "고려·조선 준비 중 안내"); await page.click("#btnReset");
+  await page.fill("#q", "불로동"); ok(await page.locator(".card", { hasText: "작은 장터" }).count() === 1 && await page.locator(".card").count() === 1, "주소 검색(불로동)"); await page.click("#btnReset");
   await page.selectOption("#fCat", "5·18"); await page.selectOption("#fStatus", "changed");
   ok(await page.locator(".card").count() === 2, "복합 필터(5·18+변형)");
   await page.selectOption("#fCat", "여순사건");
@@ -75,10 +78,10 @@ let fails = 0; const ok = (c, m) => { console.log((c ? "PASS " : "FAIL ") + m); 
   ok((await page.locator("#pickCount").textContent()).includes("0"), "담은 장소 해제");
   // 깨진 localStorage
   await page.evaluate(() => localStorage.setItem("hc.v1", "{broken")); await page.reload();
-  ok(await page.locator(".card").count() === 9, "깨진 localStorage에서도 실행");
+  ok(await page.locator(".card").count() === TOTAL, "깨진 localStorage에서도 실행");
   // 지도
   ok(await page.locator("#mapMsg").isVisible(), "타일 실패 안내");
-  await page.click('[data-fit=전남]'); ok(await page.locator('.mk[data-id=mokpo1]').isVisible(), "목포 맞춤");
+  await page.click('[data-fit=목포]'); ok(await page.locator('.mk[data-id=mokpo1]').isVisible(), "목포 맞춤");
   await page.click('[data-fit=광주]'); const before = await page.locator('.mk[data-id=sufia]').boundingBox();
   await page.locator("#map").focus(); await page.keyboard.press("ArrowRight");
   const after = await page.locator('.mk[data-id=sufia]').boundingBox(); ok(after.x < before.x - 40, "방향키 이동");

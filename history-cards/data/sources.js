@@ -3,6 +3,9 @@
 window.HC = window.HC || {};
 const U = "미확인 · 원문 접속 확인 필요";
 window.HC.sources = [
+  // 아래 두 건은 사용자가 제공한 공공데이터 파일을 직접 열어 확인했다(개별 데이터셋 주소·이용허락 조건은 확인 필요).
+  { id: "ik-sites", organization: "독립기념관", title: "독립기념관_국내사적지 위치정보_20161117 (공공데이터 파일)", url: "https://www.data.go.kr/", sourceType: "공식기관", checkedAt: "2026-10-12 (제공 파일 확인)", licenseNote: "공공데이터포털 파일데이터. 데이터셋별 이용허락 범위 확인 필요. 2016년 기준 자료" },
+  { id: "gj518-list", organization: "전남광주통합특별시", title: "518사적지 지정 현황_20260206 (공공데이터 파일)", url: "https://www.data.go.kr/", sourceType: "공식기관", checkedAt: "2026-10-12 (제공 파일 확인)", licenseNote: "공공데이터포털 파일데이터. 데이터셋별 이용허락 범위 확인 필요" },
   { id: "ency-gj31", organization: "한국학중앙연구원", title: "한국민족문화대백과사전 — 광주 3·1운동", url: "https://encykorea.aks.ac.kr/Article/E0078009", sourceType: "학술자료", checkedAt: U },
   { id: "mfis-sufia", organization: "국가보훈부 현충시설정보서비스", title: "수피아여학교 만세시위 준비지", url: "https://mfis.mpva.go.kr/memorial/movementView.do?gubunCode=DR&sid=663", sourceType: "공식기관", checkedAt: U },
   { id: "egonghun", organization: "국가보훈부", title: "공훈전자사료관", url: "https://e-gonghun.mpva.go.kr/", sourceType: "공훈록", checkedAt: U },
