@@ -1,0 +1,257 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>전남광주 서식 꾸러미</title>
+<meta name="description" content="전남광주통합특별시교육청 공개 게시판의 학교 업무 서식을 한곳에서 찾는 비공식 모음">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600&family=Nanum+Myeongjo:wght@700;800&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: 좌측 서식 목록 + 우측 상세 패널 (경북 꾸러미의 '고르고-보고-내려받기' 흐름), 휴대폰에서는 한 줄로 쌓임 */
+:root{
+  --bg:#f5f7f8; --panel:#ffffff; --ink:#18232b; --muted:#5b6b76; --line:#dbe3e8;
+  --jjok:#1f4e79;      /* 쪽빛: 나주 쪽염색의 남색 */
+  --jjok-soft:#e6eef6;
+  --lock:#8a5a00; --lock-soft:#fbf1dc;
+  --ok:#1e6b4a; --ok-soft:#e3f2ea;
+  --f-display:"Nanum Myeongjo", "Noto Serif KR", serif;
+  --f-body:"IBM Plex Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  --f-mono:"IBM Plex Mono", ui-monospace, monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0f161b; --panel:#162028; --ink:#e4ebef; --muted:#93a4b0; --line:#26343e;
+  --jjok:#8fb8e3; --jjok-soft:#1b2c3c; --lock:#e7b85a; --lock-soft:#2e2615; --ok:#7fd1a8; --ok-soft:#16291f;
+  color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f161b; --panel:#162028; --ink:#e4ebef; --muted:#93a4b0; --line:#26343e;
+  --jjok:#8fb8e3; --jjok-soft:#1b2c3c; --lock:#e7b85a; --lock-soft:#2e2615; --ok:#7fd1a8; --ok-soft:#16291f;
+  color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.6;padding-inline:16px;padding-block:0 40px}
+.wrap{max-width:1120px;margin:0 auto}
+header.top{padding-block:28px 18px;border-bottom:2px solid var(--jjok);display:flex;flex-wrap:wrap;gap:12px 24px;align-items:end;justify-content:space-between}
+h1{font-family:var(--f-display);font-weight:800;font-size:clamp(26px,4vw,36px);margin:0;letter-spacing:-.01em;text-wrap:balance}
+h1 small{display:block;font-family:var(--f-body);font-weight:500;font-size:13px;color:var(--jjok);letter-spacing:.08em;margin-bottom:4px}
+.meta{font-size:13px;color:var(--muted);max-width:46ch}
+.meta b{color:var(--ink);font-variant-numeric:tabular-nums}
+.notice{margin-block:14px;font-size:13px;color:var(--muted);display:flex;flex-wrap:wrap;gap:6px 16px}
+.notice span::before{content:"· "}
+.tools{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-block:8px 14px}
+.search{flex:1 1 280px;position:relative}
+.search input{width:100%;font:inherit;padding:11px 14px;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--ink)}
+.search input:focus{outline:2px solid var(--jjok);outline-offset:1px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font:inherit;font-size:13px;padding:6px 12px;border-radius:999px;border:1px solid var(--line);background:var(--panel);color:var(--ink);cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--jjok);border-color:var(--jjok);color:var(--panel)}
+.chip:focus-visible,.row:focus-visible,a:focus-visible{outline:2px solid var(--jjok);outline-offset:2px}
+.toggle{font-size:13px;color:var(--muted);display:flex;gap:6px;align-items:center}
+.main{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:18px;align-items:start}
+@media (max-width:820px){.main{grid-template-columns:1fr}}
+.list{background:var(--panel);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.group-h{font-size:12px;letter-spacing:.08em;color:var(--muted);padding:10px 16px 6px;background:var(--bg);border-top:1px solid var(--line)}
+.group-h:first-child{border-top:0}
+.row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 12px;padding:11px 16px;border-top:1px solid var(--line);cursor:pointer;background:var(--panel)}
+.group-h + .row{border-top:0}
+.row:hover{background:var(--jjok-soft)}
+.row[aria-selected="true"]{background:var(--jjok-soft);box-shadow:inset 3px 0 0 var(--jjok)}
+.row .t{font-weight:600;min-width:0}
+.row .s{grid-column:1/-1;font-size:12.5px;color:var(--muted);display:flex;flex-wrap:wrap;gap:4px 10px}
+.date{font-family:var(--f-mono);font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
+.badge{font-size:11.5px;padding:1px 8px;border-radius:999px;white-space:nowrap}
+.b-open{background:var(--ok-soft);color:var(--ok)}
+.b-lock{background:var(--lock-soft);color:var(--lock)}
+.b-reg{border:1px solid var(--line);color:var(--muted)}
+.b-fmt{font-family:var(--f-mono);background:var(--jjok-soft);color:var(--jjok)}
+.empty{padding:28px 16px;color:var(--muted);text-align:center}
+aside.detail{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:22px;position:sticky;top:calc(env(safe-area-inset-top,0px) + 12px)}
+.detail h2{font-family:var(--f-display);font-size:22px;margin:6px 0 10px;line-height:1.35;text-wrap:balance}
+.detail dl{display:grid;grid-template-columns:auto minmax(0,1fr);gap:6px 14px;margin:14px 0;font-size:14px}
+.detail dt{color:var(--muted)}
+.detail dd{margin:0;min-width:0;overflow-wrap:anywhere}
+.detail p{margin:10px 0;color:var(--ink)}
+.btn{display:inline-flex;align-items:center;gap:8px;font:inherit;font-weight:600;text-decoration:none;padding:10px 16px;border-radius:8px;background:var(--jjok);color:var(--panel);border:0;cursor:pointer}
+.btn.ghost{background:transparent;color:var(--jjok);border:1px solid var(--jjok)}
+.actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+.hint{font-size:12.5px;color:var(--muted);margin-top:14px;border-top:1px dashed var(--line);padding-top:12px}
+.boards{margin-top:28px}
+.boards h3{font-family:var(--f-display);font-size:19px;margin:0 0 4px}
+.boards p{margin:0 0 12px;color:var(--muted);font-size:13.5px}
+.bgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px}
+.bcard{display:block;text-decoration:none;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+.bcard:hover{border-color:var(--jjok)}
+.bcard b{display:block;font-size:14.5px}
+.bcard span{font-family:var(--f-mono);font-size:12px;color:var(--muted);overflow-wrap:anywhere}
+footer{margin-top:30px;font-size:12.5px;color:var(--muted);border-top:1px solid var(--line);padding-top:14px}
+@media (prefers-reduced-motion:no-preference){.row{transition:background .12s}}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header class="top">
+    <div>
+      <h1><small>전남광주통합특별시교육청 · 비공식</small>전남광주 서식 꾸러미</h1>
+    </div>
+    <p class="meta">교육청 곳곳의 <b>공개 게시판</b>에 흩어진 학교 업무 서식을 한곳에서 찾습니다. 지금 <b id="count">0</b>건 · 원문 게시판에서 직접 내려받습니다.</p>
+  </header>
+
+  <div class="notice">
+    <span>교육청 공식 사이트가 아닙니다. 서식의 권리는 각 기관에 있습니다.</span>
+    <span>파일은 이곳에 올려 두지 않고 원문 게시판으로 연결합니다.</span>
+    <span>로그인이 필요한 자료실은 바로가기만 안내합니다.</span>
+    <span>통합 과도기라 지침이 옛 광주·옛 전남으로 나뉜 서식은 적용 지역을 표시합니다.</span>
+  </div>
+
+  <div class="tools">
+    <label class="search" for="q"><input id="q" type="search" placeholder="서식 이름, 업무, 기관으로 찾기 (예: 편성표, 개인정보, 입학전형)" autocomplete="off"></label>
+    <label class="toggle" for="region">적용 지역 <select id="region" style="font:inherit;padding:6px 8px;border-radius:6px;border:1px solid var(--line);background:var(--panel);color:var(--ink)"><option>전체</option><option>공통</option><option>구 광주</option><option>구 전남</option></select></label>
+    <label class="toggle" for="hideLock"><input id="hideLock" type="checkbox"> 로그인 필요한 항목 숨기기</label>
+  </div>
+  <div class="chips" id="chips" role="group" aria-label="분류"></div>
+
+  <div class="main" style="margin-top:14px">
+    <div class="list" id="list" role="listbox" aria-label="서식 목록"></div>
+    <aside class="detail" id="detail" aria-live="polite"></aside>
+  </div>
+
+  <section class="boards">
+    <h3>서식이 올라오는 게시판</h3>
+    <p>목록에 없는 서식은 아래 게시판에서 먼저 찾아보세요. 새 서식이 보이면 목록에 추가합니다.</p>
+    <div class="bgrid" id="boards"></div>
+  </section>
+
+  <footer>
+    자료 기준일 2026-10-12 · 목록은 사람이 확인해 정리합니다. 링크가 바뀌었거나 빠진 서식이 있으면 관리자에게 알려 주세요.<br>
+    분류 체계는 경상북도교육청 학교지원종합자료실의 업무 분류를 참고했습니다.
+  </footer>
+</div>
+
+<script>
+/* ── 데이터 ──────────────────────────────────────────────
+   새 서식 추가: 아래 SEOSIK 배열에 한 줄씩 추가합니다.
+   cat: 분류 이름(CATS 중 하나) / access: "open" 또는 "login"
+   region: "공통"(전국·통합 공통) / "구 광주" / "구 전남" — 확인 전이면 출처 기관 기준
+   url: 게시물 주소가 있으면 게시물, 없으면 게시판 목록 주소
+   ─────────────────────────────────────────────────────── */
+const CATS = ["교육과정·학사","진로·입학","정보·개인정보","학생·장학","급식·보건","민원·대외","업무 매뉴얼(통합)"];
+
+const BOARDS = [
+  {name:"교육과정 자료실", org:"교육과정 누리집", url:"https://cic.jge.go.kr/xboard/board.php?tbnum=5"},
+  {name:"진로진학지원센터", org:"광주진로진학지원센터", url:"https://jinhak.jge.go.kr/"},
+  {name:"정보공개 자료실", org:"광주서부교육지원청", url:"https://seobu.jge.go.kr/board.php?id=112"},
+  {name:"교습소 민원 안내", org:"광주동부교육지원청", url:"https://dongbu.jge.go.kr/page.php?id=27"},
+  {name:"학교급식정보센터", org:"학교급식정보센터", url:"https://food.jge.go.kr/main/main.php"},
+  {name:"희망사다리 공지사항", org:"광주 희망사다리 교육재단", url:"https://nanum.jge.go.kr/xboard/board.php?tbnum=2"},
+  {name:"학교업무최적화지원시스템", org:"(구)광주광역시교육청 · 로그인 필요", url:"https://www.gen.go.kr/xmanual/main/main.php"},
+  {name:"본청 누리집", org:"전남광주통합특별시교육청", url:"https://www.jge.go.kr/"}
+];
+
+const SEOSIK = [
+  {title:"2027학년도 고등학교 교육과정 편제 및 학점배당 편성표 서식 (2026.8월 기준)", cat:"교육과정·학사", org:"교육과정 누리집", board:"교육과정 자료실", date:"2026-08-18", fmt:["xlsm"], access:"open", region:"구 광주", url:"https://cic.jge.go.kr/xboard/board.php?tbnum=5", note:"2022 개정 교육과정 일반고 편성표 작성 매크로 서식 v7.4.0. 8월 기준 최신판입니다."},
+  {title:"2027학년도 고등학교 교육과정 편제 및 학점배당 편성표 서식 (2026.5월 기준)", cat:"교육과정·학사", org:"교육과정 누리집", board:"교육과정 자료실", date:"2026-05-13", fmt:["xlsm"], access:"open", region:"구 광주", url:"https://cic.jge.go.kr/xboard/board.php?tbnum=5", note:"매크로 서식 v7.2.1. 8월 기준판이 나왔으므로 새 편성은 8월판을 쓰세요."},
+  {title:"2027학년도 특수학교 교육과정 편성 관련 서식 및 자체 점검표 모음", cat:"교육과정·학사", org:"교육과정 누리집", board:"교육과정 자료실", date:"2026-09-17", fmt:["hwp"], access:"open", region:"구 광주", url:"https://cic.jge.go.kr/xboard/board.php?tbnum=5", note:"특수학교 교육과정 편성 검토 및 컨설팅 계획 안내가 함께 붙어 있습니다."},
+  {title:"수업일수 감축 운영 보고서 (서식)", cat:"교육과정·학사", org:"교육과정 누리집", board:"교육과정 자료실", date:"2024-09-20", fmt:["hwpx"], access:"open", region:"구 광주", url:"https://cic.jge.go.kr/xboard/board.php?tbnum=5", note:"재해 등으로 수업일수를 줄여 운영할 때 제출하는 보고서 양식입니다."},
+  {title:"2024학년도 고등학교 교육과정 편성표 제출 서식", cat:"교육과정·학사", org:"교육과정 누리집", board:"교육과정 자료실", date:"2023-04-23", fmt:["xlsm"], access:"open", region:"구 광주", url:"https://cic.jge.go.kr/xboard/board.php?mode=view&number=22011&page=1&tbnum=5", note:"지난 학년도 서식입니다. 참고용으로만 쓰세요."},
+  {title:"2027학년도 후기 평준화 일반고등학교 신입생 입학전형 서식 모음", cat:"진로·입학", org:"광주진로진학지원센터", board:"진로진학지원센터 · 고입정보", date:"2026-09", fmt:["hwp"], access:"open", region:"구 광주", url:"https://jinhak.jge.go.kr/", note:"검정고시 합격자 등 제출서류 서식 묶음입니다. 원서 제출 전 최종본인지 다시 확인하세요."},
+  {title:"정보보안 업무편람 (관련 서식 첨부)", cat:"정보·개인정보", org:"광주서부교육지원청", board:"정보공개 자료실", date:"2022-01-18", fmt:["hwp"], access:"open", region:"구 광주", url:"https://seobu.jge.go.kr/board.php?id=112", note:"2021년판입니다. 서식 틀은 참고할 만하지만 최신 지침은 따로 확인하세요."},
+  {title:"개인정보보호 업무 편람", cat:"정보·개인정보", org:"광주서부교육지원청", board:"정보공개 자료실", date:"2022-01-18", fmt:["hwp"], access:"open", region:"구 광주", url:"https://seobu.jge.go.kr/board.php?id=112", note:"2021년판 편람입니다."},
+  {title:"각급학교 표준 개인정보파일 목록", cat:"정보·개인정보", org:"광주서부교육지원청", board:"정보공개 자료실", date:"2020-07-23", fmt:["hwp"], access:"open", region:"구 광주", url:"https://seobu.jge.go.kr/board.php?id=112", note:"학교 개인정보파일 등록·점검 때 기준으로 쓰는 목록입니다."},
+  {title:"개인정보보호 업무 이행 자체 점검 매뉴얼", cat:"정보·개인정보", org:"광주서부교육지원청", board:"정보공개 자료실", date:"2020-05-08", fmt:["hwp"], access:"open", region:"구 광주", url:"https://seobu.jge.go.kr/board.php?id=112", note:"자체 점검표가 들어 있습니다."},
+  {title:"장학생 월별 학업·진로활동 모니터링 서식", cat:"학생·장학", org:"광주 희망사다리 교육재단", board:"희망사다리 공지사항", date:"2026-04-20", fmt:["hwp"], access:"open", region:"구 광주", url:"https://nanum.jge.go.kr/xboard/board.php?tbnum=2", note:"희망사다리 장학생 담당 교사가 매월 작성하는 양식입니다."},
+  {title:"학교급식 식재료 안전성 강화 교육 교재 (2026)", cat:"급식·보건", org:"학교급식정보센터", board:"정보·홍보마당 자료실", date:"2026", fmt:["pdf"], access:"open", region:"구 광주", url:"https://food.jge.go.kr/main/main.php", note:"원산지 표시, 축산물 이력제, 방사능 식재료 교육 교재입니다. 서식보다는 교육 자료입니다."},
+  {title:"학원·교습소·개인과외교습자 관련 민원 서식 목록표", cat:"민원·대외", org:"광주동부교육지원청", board:"교습소 민원 안내", date:"", fmt:["hwp"], access:"open", region:"구 광주", url:"https://dongbu.jge.go.kr/page.php?id=27", note:"교습소 설립·변경 신고서 등. 학교 업무보다는 민원용입니다."},
+  {title:"학교업무최적화지원시스템 (업무편람·지침·감사길라잡이)", cat:"업무 매뉴얼(통합)", org:"(구)광주광역시교육청", board:"학교업무최적화지원시스템", date:"", fmt:["hwp","pdf"], access:"login", region:"구 광주", url:"https://www.gen.go.kr/xmanual/main/main.php", note:"경북 학교지원종합자료실과 가장 비슷한 통합 자료실이지만 교직원 로그인이 필요합니다. 이 꾸러미에는 파일을 옮기지 않습니다."}
+];
+
+/* ── 화면 ───────────────────────────────────────────── */
+const $ = s => document.querySelector(s);
+let state = {q:"", cat:"전체", hideLock:false, region:"전체", sel:null};
+try{ const saved = JSON.parse(localStorage.getItem("jge-seosik")||"{}"); if(saved.cat) state.cat = saved.cat; if(saved.hideLock) state.hideLock = true; }catch(e){}
+$("#hideLock").checked = state.hideLock;
+
+function save(){ try{ localStorage.setItem("jge-seosik", JSON.stringify({cat:state.cat, hideLock:state.hideLock})); }catch(e){} }
+function esc(s){ return String(s).replace(/[&<>"]/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])); }
+
+function filtered(){
+  const q = state.q.trim().toLowerCase();
+  return SEOSIK.map((d,i)=>({...d,i})).filter(d=>{
+    if(state.cat!=="전체" && d.cat!==state.cat) return false;
+    if(state.hideLock && d.access==="login") return false;
+    if(state.region!=="전체" && (d.region||"공통")!==state.region) return false;
+    if(!q) return true;
+    return [d.title,d.org,d.board,d.note,d.cat].join(" ").toLowerCase().includes(q);
+  });
+}
+
+function renderChips(){
+  const counts = {}; SEOSIK.forEach(d=>counts[d.cat]=(counts[d.cat]||0)+1);
+  const all = ["전체",...CATS.filter(c=>counts[c])];
+  $("#chips").innerHTML = all.map(c=>`<button class="chip" type="button" data-cat="${esc(c)}" aria-pressed="${c===state.cat}">${esc(c)} <span class="date">${c==="전체"?SEOSIK.length:counts[c]}</span></button>`).join("");
+}
+
+function badges(d){
+  return `<span class="badge b-reg">${esc(d.region||"공통")}</span>${d.fmt.map(f=>`<span class="badge b-fmt">${esc(f)}</span>`).join("")}${d.access==="login"?`<span class="badge b-lock">로그인 필요</span>`:`<span class="badge b-open">공개</span>`}`;
+}
+
+function renderList(){
+  const items = filtered();
+  $("#count").textContent = SEOSIK.length;
+  if(!items.length){ $("#list").innerHTML = `<div class="empty">찾는 서식이 목록에 없습니다. 아래 게시판에서 직접 확인해 보세요.</div>`; renderDetail(null); return; }
+  const byCat = {}; items.forEach(d=>(byCat[d.cat]=byCat[d.cat]||[]).push(d));
+  let html = "";
+  CATS.forEach(c=>{
+    if(!byCat[c]) return;
+    byCat[c].sort((a,b)=>(b.date||"").localeCompare(a.date||""));
+    html += `<div class="group-h">${esc(c)}</div>`;
+    html += byCat[c].map(d=>`<div class="row" role="option" tabindex="0" data-i="${d.i}" aria-selected="${state.sel===d.i}">
+      <span class="t">${esc(d.title)}</span><span class="date">${esc(d.date||"—")}</span>
+      <span class="s"><span>${esc(d.org)}</span>${badges(d)}</span></div>`).join("");
+  });
+  $("#list").innerHTML = html;
+  if(state.sel===null || !items.some(d=>d.i===state.sel)) state.sel = items[0].i;
+  document.querySelectorAll(".row").forEach(r=>r.setAttribute("aria-selected", +r.dataset.i===state.sel));
+  renderDetail(SEOSIK[state.sel]);
+}
+
+function renderDetail(d){
+  if(!d){ $("#detail").innerHTML = `<p class="hint" style="border:0;margin:0">목록에서 서식을 고르면 이 자리에 정보가 나옵니다.</p>`; return; }
+  const lock = d.access==="login";
+  $("#detail").innerHTML = `
+    <div class="s" style="display:flex;gap:6px;flex-wrap:wrap">${badges(d)}</div>
+    <h2>${esc(d.title)}</h2>
+    <p>${esc(d.note||"")}</p>
+    <dl>
+      <dt>분류</dt><dd>${esc(d.cat)}</dd>
+      <dt>적용 지역</dt><dd>${esc(d.region||"공통")}${(d.region&&d.region!=="공통")?" · 다른 지역 학교는 해당 지침을 따로 확인":""}</dd>
+      <dt>기관</dt><dd>${esc(d.org)}</dd>
+      <dt>게시판</dt><dd>${esc(d.board)}</dd>
+      <dt>게시일</dt><dd class="date">${esc(d.date||"확인 필요")}</dd>
+    </dl>
+    <div class="actions">
+      <a class="btn" href="${esc(d.url)}" target="_blank" rel="noopener">${lock?"자료실 열기 (로그인)":"원문 게시판에서 내려받기"} ↗</a>
+      <button class="btn ghost" type="button" id="copy">주소 복사</button>
+    </div>
+    <p class="hint">${lock?"업무포털 또는 교직원 계정으로 로그인한 뒤 이용하세요. 로그인 자료는 외부에 다시 올리지 않습니다.":"게시판에서 같은 제목의 글을 찾아 첨부파일을 내려받으세요. 같은 서식이 해마다 새로 올라오니 날짜를 확인하세요."}</p>`;
+  $("#copy").onclick = async (e)=>{
+    try{ await navigator.clipboard.writeText(d.url); e.target.textContent="복사했습니다"; }
+    catch(err){ e.target.textContent = d.url; }
+  };
+}
+
+function renderBoards(){
+  $("#boards").innerHTML = BOARDS.map(b=>`<a class="bcard" href="${esc(b.url)}" target="_blank" rel="noopener"><b>${esc(b.name)}</b><span>${esc(b.org)}</span></a>`).join("");
+}
+
+$("#q").addEventListener("input", e=>{ state.q = e.target.value; renderList(); });
+$("#region").addEventListener("change", e=>{ state.region = e.target.value; renderList(); });
+$("#hideLock").addEventListener("change", e=>{ state.hideLock = e.target.checked; save(); renderList(); });
+$("#chips").addEventListener("click", e=>{ const b = e.target.closest(".chip"); if(!b) return; state.cat = b.dataset.cat; save(); renderChips(); renderList(); });
+$("#list").addEventListener("click", e=>{ const r = e.target.closest(".row"); if(!r) return; state.sel = +r.dataset.i; renderList(); });
+$("#list").addEventListener("keydown", e=>{ if(e.key==="Enter"||e.key===" "){ const r = e.target.closest(".row"); if(r){ e.preventDefault(); state.sel = +r.dataset.i; renderList(); document.querySelector(`.row[data-i="${state.sel}"]`)?.focus(); } } });
+
+renderChips(); renderList(); renderBoards();
+</script>
+</body>
+</html>
