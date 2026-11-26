@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>두 도시 이야기 | 웹학습지</title>
+<style>
+:root{--ink:#18302f;--muted:#4b625f;--paper:#fbfaf4;--green:#174b42;--line:#aebdb7;--gold:#f7e5c2;--b:#e2eee5;--white:#fff;--focus:#b35b00}
+*{box-sizing:border-box}html{scroll-behavior:auto}body{margin:0;background:var(--paper);font:18px/1.65 system-ui,"Malgun Gothic",sans-serif;color:var(--ink);overflow-wrap:anywhere}header{background:#143e38;color:white;padding:clamp(1.2rem,4vw,3rem) 1rem 1.6rem;border-bottom:6px solid #c38d50}header div,main,footer{max-width:1040px;margin:auto}h1,h2,h3,p{margin-top:0}h1{font-size:clamp(2.2rem,6vw,4rem);line-height:1.12;letter-spacing:-.06em;margin-bottom:.45rem}header p{margin:0}.kicker{font-size:.85rem;font-weight:750;letter-spacing:.06em}.subtitle{margin-top:.8rem}main{padding:1rem 1rem 2rem}.statusbar{display:flex;gap:.45rem 1.5rem;flex-wrap:wrap;justify-content:space-between;font-size:.82rem;color:var(--muted);margin:.25rem 0 .9rem}.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:.45rem;margin:.4rem 0 1.2rem}.steps button{background:white;color:var(--green);text-align:left;padding:.55rem .65rem}.steps button[aria-current=step]{background:var(--green);color:white}.n{font-size:.82em;font-weight:bold;margin-right:.3rem}
+button{font:inherit;font-weight:720;line-height:1.25;border:1px solid var(--green);border-radius:.45rem;padding:.65rem .9rem;cursor:pointer;min-height:44px;background:white;color:var(--green)}button.primary{background:var(--green);color:white}button:hover{box-shadow:0 0 0 1px var(--green) inset}a{color:#114d73}a:focus-visible,button:focus-visible,select:focus-visible,textarea:focus-visible,summary:focus-visible{outline:3px solid var(--focus);outline-offset:2px}label{display:block;font-weight:720;margin:.78rem 0 .3rem}textarea,select{width:100%;display:block;border:1px solid #738c83;border-radius:.4rem;padding:.6rem;background:white;font:inherit;color:inherit}textarea{resize:vertical;min-height:3.4rem;line-height:1.42}
+h2{font-size:clamp(1.55rem,4vw,2.25rem);letter-spacing:-.055em;line-height:1.25;margin-bottom:.5rem}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem}.card,.answer,.timeline{border:1px solid var(--line);border-radius:.6rem;padding:.85rem 1rem;background:var(--white)}.card h3,.timeline h3{margin:0 0 .2rem;font-size:1.15rem}.card p:last-child{margin-bottom:0}.source-a{border-top:5px solid #b28249}.source-b{border-top:5px solid #408168}.date{color:var(--muted);font-size:.84em}.note{background:var(--gold);padding:.65rem .85rem;border-radius:.35rem;margin:.8rem 0}.buttonbar{display:flex;justify-content:flex-end;gap:.55rem;flex-wrap:wrap;margin:1.15rem 0}.eventline{padding-left:1.3rem;margin:.55rem 0}.eventline li{margin:.12rem 0} .answer h3{margin-bottom:.25rem;font-size:1em}.answer p{white-space:pre-wrap;margin-bottom:0}.answer dt{font-weight:bold;margin-top:.55rem}.answer dd{margin:0;white-space:pre-wrap}.answer dl{margin:.2rem 0}.print-lines{display:none}details{margin:1rem 0;padding:.55rem .85rem;border:1px solid var(--line);border-radius:.5rem;background:#edf3ea}summary{cursor:pointer;font-weight:bold}details p{margin:.5rem 0}.subpanel{padding:.7rem 1rem;background:var(--b);border-radius:.5rem;margin:.6rem 0}
+footer{padding:0 1rem 1.4rem;color:var(--muted);font-size:.82rem}.print-only{display:none}
+@media(max-width:690px){body{font-size:16px}.grid{grid-template-columns:1fr}.steps{grid-template-columns:repeat(2,1fr)} main{padding:.8rem .75rem 1.6rem}.buttonbar{justify-content:stretch}.buttonbar button{flex:1 1 auto}}
+@media print{@page{margin:12mm}body{font-size:10pt;background:white;color:#000;line-height:1.32}.screen,footer,.buttonbar,.statusbar,.steps,.note{display:none!important}header{border:0;color:#000;background:white;padding:0 0 5mm}h1{font-size:24pt}main{padding:0}.print-only{display:block}.print-only h2{font-size:12pt;margin:4mm 0 1mm}.print-only p{margin:1.2mm 0}.print-only textarea{display:none}.print-area{border-bottom:1px solid #999;min-height:6mm;margin:0 0 2mm;white-space:pre-wrap}.print-sources{display:grid;grid-template-columns:1fr 1fr;gap:5mm}.print-sources div{border:1px solid #999;padding:2mm 3mm}.print-only a{color:#000}.print-only hr{border:0;border-top:1px solid #bbb}}
+</style>
+</head>
+<body>
+<header><div><p class="kicker">HISTORIA · 역사 탐구 · 1차시 웹학습지</p><h1>두 도시 이야기</h1><p>1789년 파리와 1980년 광주</p><p class="subtitle screen">두 도시의 사람들은 글로 무엇을 하려 했을까?</p></div></header>
+<main>
+<div class="statusbar screen"><strong>실명·학번 입력 금지 · 서버로 보내지 않음</strong><span id="save-state" role="status">저장 상태 확인 중</span></div>
+<nav class="steps screen" aria-label="활동 단계">
+<button type="button" data-go="0" aria-current="step"><span class="n">01</span>사료 읽기</button>
+<button type="button" data-go="1"><span class="n">02</span>두 도시 비교</button>
+<button type="button" data-go="2"><span class="n">03</span>문장 고치기</button>
+<button type="button" data-go="3"><span class="n">04</span>결과 확인</button>
+</nav>
+<div class="screen">
+<section class="stage" id="stage0" aria-labelledby="heading0"><h2 id="heading0" tabindex="-1">누가, 무엇을 말했을까?</h2>
+<p>자료 A에서 시민이 할 수 있다고 한 일을 찾으세요. 자료 B에서는 <strong>협상에 바란 점</strong>과 <strong>시민에게 부탁한 일</strong>을 하나씩 고르세요.</p>
+<div class="grid" id="cards">
+<article class="card source-a"><h3>A · 프랑스 인권선언 제11조</h3><p class="date">1789년 8월 26일 · 국민제헌의회 채택 · 권리 선언</p><p>생각과 의견을 자유롭게 전하는 것은 소중한 권리다. 시민은 자유롭게 말하고, 쓰고, 인쇄할 수 있다. 다만 법이 정한 경우에는 이 자유를 남용한 데 책임을 진다.</p><p class="date">학생용 풀이 · <a href="https://www.elysee.fr/la-presidence/la-declaration-des-droits-de-l-homme-et-du-citoyen" target="_blank" rel="noopener noreferrer">프랑스 대통령실 자료</a></p></article>
+<article class="card source-b"><h3>B · 『민주시민회보』 제9호</h3><p class="date">1980년 5월 26일 · 광주 · 광주시민일동 명의</p><p>㉠ 시민의 뜻이 반영되는 대등한 협상과 진상 규명을 바랐다.<br>㉡ 방송과 언론이 광주의 상황을 왜곡해 보도하고 시민을 폭도로 몰고 있다고 비판했다.<br>㉢ 도청 앞 집회에 함께해 달라고 요청했다.<br>㉣ 거리를 정리하고 어려운 이웃을 돕자고 했다.</p><p class="date">학생용 요약 · <a href="https://archives.kdemo.or.kr/isad/view/00877753" target="_blank" rel="noopener noreferrer">민주화운동기념사업회 자료</a></p></article>
+</div>
+<details><summary>교과서와 연결하기 · 제2조 요지</summary><p>자유·재산·안전·억압에 저항할 권리는 인간의 자연적 권리다. 제11조는 그중 생각과 의견을 어떻게 전할 수 있는지 구체적으로 보여 준다.</p></details>
+<div class="grid">
+<div><label for="rightF">A에서 말한 자유</label><textarea id="rightF" placeholder="예: 시민이 자유롭게 ___할 수 있다." maxlength="500"></textarea></div>
+<div><label for="rightG">B가 지적한 보도의 문제</label><textarea id="rightG" placeholder="B ㉡에서 확인하세요." maxlength="500"></textarea></div>
+<div><label for="demand">B · 협상에 바란 점</label><select id="demand"><option value="">근거를 고르세요</option><option>㉠ 대등한 협상과 진상 규명</option><option>㉡ 왜곡 보도 비판</option><option>㉢ 집회 참여 요청</option><option>㉣ 이웃 돕기 요청</option></select></div>
+<div><label for="appeal">B · 시민에게 부탁한 일</label><select id="appeal"><option value="">근거를 고르세요</option><option>㉠ 대등한 협상과 진상 규명</option><option>㉡ 왜곡 보도 비판</option><option>㉢ 집회 참여 요청</option><option>㉣ 이웃 돕기 요청</option></select></div>
+</div><div class="buttonbar"><button class="primary" data-go="1">다음 · 두 도시 비교</button></div></section>
+
+<section class="stage" id="stage1" aria-labelledby="heading1" hidden><h2 id="heading1" tabindex="-1">두 글은 사건의 어느 때에 나왔을까?</h2><p>두 줄 연표에서 각 글이 나온 칸을 찾으세요. 그다음 누구에게 무엇을 말하려 했는지 비교해 보세요.</p>
+<div class="grid">
+<div class="timeline"><h3>1789년 파리</h3><ol class="eventline"><li>6.17. 국민의회 결성</li><li>7.14. 바스티유 습격</li><li>8.26. 인권선언 채택</li></ol><label for="paris">자료 A가 나온 때</label><select id="paris"><option value="">날짜를 고르세요</option><option>1789.6.17.</option><option>1789.7.14.</option><option>1789.8.26.</option></select></div>
+<div class="timeline"><h3>1980년 광주</h3><ol class="eventline"><li>5.17. 비상계엄 전국 확대 결정</li><li>5.18. 항쟁 시작</li><li>5.26. 회보 제9호 발행</li><li>5.27. 계엄군 진압</li></ol><label for="gwangju">자료 B가 나온 때</label><select id="gwangju"><option value="">날짜를 고르세요</option><option>1980.5.17.</option><option>1980.5.18.</option><option>1980.5.26.</option><option>1980.5.27.</option></select></div>
+</div>
+<div class="grid"><div><label for="same">닮은 점 (선택)</label><textarea id="same" maxlength="500" placeholder="두 글 모두 시민에게 무엇을 알렸나요?"></textarea></div><div><label for="diff">다른 점 (선택)</label><textarea id="diff" maxlength="500" placeholder="두 글의 목적이 같았나요?"></textarea></div></div>
+<div class="grid"><div><label for="whoA">A를 쓴 이와 들을 이 (선택)</label><textarea id="whoA" maxlength="300" placeholder="___가 ___에게 썼다."></textarea></div><div><label for="whoB">B를 쓴 이와 들을 이 (선택)</label><textarea id="whoB" maxlength="300" placeholder="‘광주시민일동’ 이름으로 ___에게 썼다."></textarea></div></div>
+<p class="note">글을 남겼다는 공통점만으로 두 사건의 배경이나 결과가 같다고 할 수는 없어요. 사료가 보여 주는 범위 안에서 비교해요.</p>
+<div class="buttonbar"><button data-go="0">이전</button><button class="primary" data-go="2">다음 · 문장 고치기</button></div></section>
+
+<section class="stage" id="stage2" aria-labelledby="heading2" hidden><h2 id="heading2" tabindex="-1">근거를 대고, 내 문장 한 곳 고치기</h2><p><strong>초안과 근거 → 짝 질문 → 고쳐 쓰기.</strong> 처음 문장은 지우지 마세요.</p>
+<div class="subpanel"><strong>A:</strong> 말하고 쓰고 인쇄할 자유. <strong>B:</strong> ㉠ 협상 · ㉡ 보도 · ㉢ 집회 · ㉣ 이웃 돕기. <button type="button" data-go="0">자료 다시 보기</button></div>
+<label for="initial">처음 쓴 비교 문장</label><textarea id="initial" maxlength="1800" placeholder="두 글은 모두 ___. 다만 선언은 ___, 회보는 ___했다."></textarea>
+<div class="grid"><div><label for="basisA">A에서 고른 근거</label><textarea id="basisA" maxlength="700" placeholder="제11조의 표현 중 한 곳"></textarea></div>
+<div><label for="basisB">B에서 고른 근거</label><textarea id="basisB" maxlength="700" placeholder="회보의 ㉠~㉣ 중 한 곳"></textarea></div></div>
+<label for="peer">짝에게 받은 질문</label><textarea id="peer" maxlength="700" placeholder="어느 문구를 보고 그렇게 썼어? 두 글의 목적이 같았을까?"></textarea>
+<label for="revised">고친 비교 문장</label><textarea id="revised" maxlength="1800" placeholder="처음 문장에서 범위를 좁히거나 근거를 더해 봐요."></textarea>
+<label for="reason">무엇을, 왜 바꿨나요?</label><textarea id="reason" maxlength="1400" placeholder="자료 ___에서 ___을 확인해 ___를 ___로 고쳤다."></textarea>
+<div class="buttonbar"><button data-go="1">이전</button><button class="primary" data-go="3">다음 · 결과 확인</button></div></section>
+
+<section class="stage" id="stage3" aria-labelledby="heading3" hidden><h2 id="heading3" tabindex="-1">내 비교가 어떻게 달라졌을까?</h2><p id="check" class="note" role="status"></p><div class="grid" id="output"></div>
+<details><summary>선생님 예시 보기</summary><p><strong>처음:</strong> 둘 다 권리를 선언했다.</p><p><strong>고친 문장:</strong> 선언은 표현의 자유를 권리로 제시했고, 회보는 보도 왜곡에 맞서 자기 상황을 알렸다.</p><p><strong>고친 이유:</strong> B ㉡에서 왜곡 보도 비판을 확인해 ‘권리를 선언했다’를 ‘상황을 알렸다’로 바꿨다.</p></details>
+<label for="exit">마무리 한 문장 · 의견을 말하고 다른 소식을 들을 수 있는 조건은 시민 참여에 왜 필요할까요?</label><textarea id="exit" maxlength="900"></textarea><p>작성 기록은 <strong>이 기기에만</strong> 저장되고 서버로 보내지 않습니다. 실명·학번은 쓰지 않습니다. CSV는 선생님이 안내할 때만 내려받고, 공용 기기에서는 마친 뒤 ‘기록 지우기’를 눌러 주세요.</p>
+<div class="buttonbar"><button data-go="2">이전 · 고치기</button><button id="reset">기록 지우기</button><button id="export" class="primary">응답 CSV 받기</button></div></section>
+<div class="buttonbar"><button id="print">인쇄 / PDF 저장</button></div>
+</div>
+<div class="print-only" aria-hidden="true">
+<p><strong>탐구 질문</strong> 두 도시의 사람들은 글로 무엇을 하려 했을까?</p>
+<div id="print-sources" class="print-sources"></div>
+<h2>1. 사료에서 근거 찾기</h2>
+<p>자료 A에서 찾은 자유: <span data-print="rightF"></span></p><p>자료 B에서 지적한 보도의 문제: <span data-print="rightG"></span></p>
+<p>자료 B의 협상에 바란 점: <span data-print="demand"></span> &nbsp; 시민에게 부탁한 일: <span data-print="appeal"></span></p>
+<h2>2. 아래 연표에서 A·B가 나온 때에 동그라미 하기</h2>
+<p>파리: 1789.6.17. 국민의회 결성 → 7.14. 바스티유 습격 → 8.26. 인권선언 채택 <span data-print="paris"></span></p>
+<p>광주: 1980.5.17. 비상계엄 전국 확대 결정 → 5.18. 항쟁 시작 → 5.26. 회보 제9호 발행 → 5.27. 진압 <span data-print="gwangju"></span></p>
+<p>A를 쓴 이와 들을 이: <span data-print="whoA"></span></p><p>B를 쓴 이와 들을 이: <span data-print="whoB"></span></p>
+<h2>3. 근거로 문장 고치기</h2>
+<p>처음 문장</p><div class="print-area" data-print="initial"></div>
+<p>A 근거</p><div class="print-area" data-print="basisA"></div>
+<p>B 근거</p><div class="print-area" data-print="basisB"></div>
+<p>짝 질문</p><div class="print-area" data-print="peer"></div>
+<p>고친 문장</p><div class="print-area" data-print="revised"></div>
+<p>고친 이유</p><div class="print-area" data-print="reason"></div>
+<p>마무리 · 말하고 다른 소식을 들을 수 있어야 하는 이유</p><div class="print-area" data-print="exit"></div>
+</div>
+</main>
+<footer>역사 1차시 웹학습지 · 작성 기록은 이 브라우저에만 보관됩니다. 공용 기기에서는 마친 뒤 지워 주세요.</footer>
+<script>
+'use strict';
+const fields=['rightF','rightG','demand','appeal','paris','gwangju','same','diff','whoA','whoB','initial','basisA','basisB','peer','revised','reason','exit'];
+const mainFields=['initial','basisA','basisB','peer','revised','reason'];
+const labels={initial:'처음 문장',basisA:'A의 근거',basisB:'B의 근거',peer:'짝 질문',revised:'고친 문장',reason:'고친 이유'};
+const query=id=>document.getElementById(id);
+const key='historia.two-cities.class.202611.v1';
+let storeOK=true,stage=0;
+function values(){return Object.fromEntries(fields.map(id=>[id,query(id).value]));}
+function save(){if(!storeOK)return;try{localStorage.setItem(key,JSON.stringify({stage,answers:values()}));}catch{storeOK=false;query('save-state').textContent='이 브라우저는 자동 저장을 막고 있어요. 새로고침 전 CSV를 받으세요.';}}
+function read(){try{localStorage.setItem(key+'.probe','1');localStorage.removeItem(key+'.probe');return JSON.parse(localStorage.getItem(key)||'null');}catch{storeOK=false;return null;}}
+function refreshPrint(){const answers=values();document.querySelectorAll('[data-print]').forEach(el=>el.textContent=answers[el.dataset.print]||(el.tagName==='SPAN'?'____________________':''));}
+function showResult(){const answers=values();const target=query('output');target.replaceChildren();[mainFields.slice(0,4),mainFields.slice(4)].forEach(list=>{const card=document.createElement('dl');card.className='answer';list.forEach(id=>{const h=document.createElement('dt'),p=document.createElement('dd');h.textContent=labels[id];p.textContent=answers[id].trim()||'아직 작성하지 않았어요.';card.append(h,p)});target.append(card);});const count=mainFields.filter(k=>answers[k].trim()).length;query('check').textContent=count===6?'기록을 모두 남겼어요. 어떤 근거로 설명을 바꿨는지 확인해 봐요.':'문장 수정 기록 '+count+'/6칸 작성. 빠진 칸은 이전 화면에서 채울 수 있어요.';}
+function show(next,focus=true){stage=next;document.querySelectorAll('.stage').forEach((el,i)=>el.hidden=i!==stage);document.querySelectorAll('.steps button').forEach((el,i)=>i===stage?el.setAttribute('aria-current','step'):el.removeAttribute('aria-current'));if(stage===3)showResult();save();if(focus){query('heading'+stage).focus({preventScroll:true});query('heading'+stage).scrollIntoView({block:'start'});}}
+function csvCell(raw){let s=String(raw??'');if(/^[\s\u0000-\u001f]*[=+@-]|^[\t\r\n]/u.test(s))s="'"+s;return '"'+s.replaceAll('"','""')+'"';}
+function csvText(){const a=values();const columns=['제출ID','수업ID','학번','이름','제출시각','최초문장','수정문장','수정이유','프랑스근거','광주근거','전체답변JSON','정렬P','정렬G','학년도','제출 당시 학급','성취기준'];const row=['LOCAL-'+Date.now(),'TWO-CITIES-2026','','',new Date().toISOString(),a.initial,a.revised,a.reason,a.basisA,a.basisB,JSON.stringify({mode:'LOCAL_CLASS',...a}),a.paris,a.gwangju,'2026','','9역05-01; 9역13-03(연계)'];return '\uFEFF'+columns.map(csvCell).join(',')+'\r\n'+row.map(csvCell).join(',')+'\r\n';}
+function download(){const url=URL.createObjectURL(new Blob([csvText()],{type:'text/csv;charset=utf-8'}));const a=document.createElement('a');a.href=url;a.download='두도시이야기_응답.csv';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),3000);}
+const prior=read();
+if(prior?.answers&&typeof prior.answers==='object'){fields.forEach(id=>{if(typeof prior.answers[id]==='string')query(id).value=prior.answers[id]});}
+query('save-state').textContent=storeOK?'이 브라우저에 자동 저장':'자동 저장 불가 · 닫기 전에 CSV를 받으세요';
+document.querySelectorAll('[data-go]').forEach(btn=>btn.addEventListener('click',()=>show(+btn.dataset.go)));
+fields.forEach(id=>{query(id).addEventListener('input',save);query(id).addEventListener('change',save)});
+query('export').addEventListener('click',download);
+query('reset').addEventListener('click',()=>{if(!window.confirm('이 브라우저의 작성 기록을 지울까요? 저장한 CSV 파일은 그대로 남습니다.'))return;fields.forEach(id=>query(id).value='');try{localStorage.removeItem(key)}catch{}show(0);});
+const pc=query('print-sources');document.querySelectorAll('#cards article').forEach(card=>{const item=document.createElement('div');for(const child of card.children)item.append(child.cloneNode(true));pc.append(item);});
+addEventListener('beforeprint',refreshPrint);
+query('print').addEventListener('click',()=>{refreshPrint();window.print();});
+show(Number.isInteger(prior?.stage)&&prior.stage>=0&&prior.stage<4?prior.stage:0,false);
+</script>
+</body>
+</html>
